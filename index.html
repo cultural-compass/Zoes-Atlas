@@ -8,4 +8,118 @@
     body {
       font-family: Arial, sans-serif;
       margin: 0;
-      pad
+      padding: 0;
+      background: #fff;
+      color: #333;
+    }
+    header {
+      background-color: #ff69b4; /* Zoe pink */
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    p.intro {
+      color: #32cd32; /* Zoe green */
+      font-size: 1.2em;
+      text-align: center;
+      padding: 10px 20px;
+    }
+    #map {
+      height: 600px;
+      width: 100%;
+      margin-bottom: 20px;
+    }
+    h2 {
+      text-align: center;
+      color: #ff69b4;
+      margin-bottom: 10px;
+    }
+    ul.location-list {
+      color: #32cd32;
+      font-size: 1.1em;
+      list-style: none;
+      padding: 0 20px 40px 20px;
+    }
+    ul.location-list li {
+      margin: 5px 0;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Zoe Atlas: Dublin</h1>
+  </header>
+  <p class="intro">
+    Hey love bugs! 💌 Explore some of my favorite Black-friendly and culturally rich spots in Dublin. Click the markers on the map to see descriptions and highlights!
+  </p>
+
+  <div id="map"></div>
+
+  <h2>Dublin Locations</h2>
+  <ul class="location-list">
+    <li>Nine Crows Vintage 🛍️</li>
+    <li>Copper & Straw ☕</li>
+    <li>George's Street Arcade 🎨</li>
+    <li>Lou's Lot 👗</li>
+    <li>The Big Smoke Vintage Clothing 🛒</li>
+  </ul>
+
+  <script>
+    function initMap() {
+      const dublin = { lat: 53.344, lng: -6.267 };
+      const map = new google.maps.Map(document.getElementById("map"), {
+        zoom: 14,
+        center: dublin,
+      });
+
+      const locations = [
+        {
+          name: "Nine Crows Vintage",
+          position: { lat: 53.343, lng: -6.262 },
+          description: "🛍️ Curated vintage & Y2K clothing treasures—fun, eclectic, and a must-visit for fashion lovers."
+        },
+        {
+          name: "Copper & Straw",
+          position: { lat: 53.344, lng: -6.267 },
+          description: "☕ Great coffee, cozy vibes, and a welcoming spot to recharge while exploring Dublin."
+        },
+        {
+          name: "George's Street Arcade",
+          position: { lat: 53.3435, lng: -6.2675 },
+          description: "🎨 Open-air market with eclectic stalls and local flair—perfect for browsing unique finds."
+        },
+        {
+          name: "Lou's Lot",
+          position: { lat: 53.3437, lng: -6.268 },
+          description: "👗 Luxury vintage curated for style seekers—small but packed with treasures."
+        },
+        {
+          name: "The Big Smoke Vintage Clothing",
+          position: { lat: 53.3428, lng: -6.269 },
+          description: "🛒 Classic vintage pieces with a modern twist—great for statement looks."
+        },
+      ];
+
+      locations.forEach((loc) => {
+        const marker = new google.maps.Marker({
+          position: loc.position,
+          map: map,
+          title: loc.name,
+        });
+
+        const infoWindow = new google.maps.InfoWindow({
+          content: `<strong>${loc.name}</strong><br>${loc.description}`,
+        });
+
+        marker.addListener("click", () => {
+          infoWindow.open(map, marker);
+        });
+      });
+    }
+  </script>
+
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB38rOcYSnjrdPynqMR6i0vpP8ZYi1Z2W4&callback=initMap" async defer></script>
+</body>
+</html>
+
+
