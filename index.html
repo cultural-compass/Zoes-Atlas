@@ -29,30 +29,35 @@
       margin-top: 0;
       color: #ff3399;
     }
-    .city {
-      margin-top: 20px;
-      font-size: 1.4em;
-      font-weight: bold;
-      color: #222;
-      border-bottom: 2px solid #ccc;
-      padding-bottom: 5px;
+    details {
       margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      background: white;
+      padding: 10px;
+    }
+    summary {
+      font-weight: bold;
+      font-size: 1.2em;
+      cursor: pointer;
+      color: #222;
     }
     ul {
       list-style: none;
       padding: 0;
+      margin: 10px 0 0 15px;
     }
     li {
-      margin-bottom: 15px;
+      margin-bottom: 10px;
       cursor: pointer;
-      padding: 10px;
-      border: 1px solid #ccc;
+      padding: 8px;
+      border: 1px solid #ddd;
       border-radius: 5px;
-      background: white;
+      background: #fafafa;
       transition: background 0.3s;
     }
     li:hover {
-      background: #f9f9f9;
+      background: #f0f0f0;
     }
     footer {
       background-color: #ff66b2;
@@ -62,19 +67,20 @@
       margin-top: 20px;
     }
   </style>
-  <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB38rOcYSnjrdPynqMR6i0vpP8ZYi1Z2W4"></script>
   <script>
     let map;
 
     function initMap() {
       map = new google.maps.Map(document.getElementById("map"), {
-        zoom: 12,
-        center: { lat: 53.3498, lng: -6.2603 } // Default: Dublin
+        zoom: 5,
+        center: { lat: 40.0, lng: -3.7 } // Rough center between Spain & Ireland
       });
 
       const places = [
         // Dublin
         {
+          country: "Ireland",
           city: "Dublin",
           name: "Nine Crows Vintage",
           position: { lat: 53.3437, lng: -6.2646 },
@@ -82,6 +88,7 @@
           address: "22 Temple Lane S, Dublin 2, D02 HP52, Ireland"
         },
         {
+          country: "Ireland",
           city: "Dublin",
           name: "Lou's Lot (George's Street Arcade)",
           position: { lat: 53.3425, lng: -6.2634 },
@@ -89,6 +96,7 @@
           address: "South Great George's Street, Dublin 2, Ireland"
         },
         {
+          country: "Ireland",
           city: "Dublin",
           name: "Copper and Straw",
           position: { lat: 53.3461, lng: -6.2638 },
@@ -96,6 +104,7 @@
           address: "Aston Quay, Temple Bar, Dublin, D02 FV38, Ireland"
         },
         {
+          country: "Ireland",
           city: "Dublin",
           name: "George's Arcade",
           position: { lat: 53.3430, lng: -6.2635 },
@@ -103,6 +112,7 @@
           address: "South Great George's Street, Dublin 2, Ireland"
         },
         {
+          country: "Ireland",
           city: "Dublin",
           name: "Bambino's",
           position: { lat: 53.3395, lng: -6.2651 },
@@ -110,101 +120,97 @@
           address: "37 Stephen Street Lower, Dublin 2, D02 T862, Ireland"
         },
         {
+          country: "Ireland",
           city: "Dublin",
           name: "The Big Smoke Vintage Clothing",
           position: { lat: 53.3452, lng: -6.2639 },
           description: "Vintage treasures by Merchant’s Arch.",
           address: "Merchant's Arch, Dublin 2, D02 WP27, Ireland"
         },
-
         // Madrid
         {
+          country: "Spain",
           city: "Madrid",
-          name: "Coffee Wonder",
-          position: { lat: 40.410, lng: -3.702 },
-          description: "Amazing coffee, wonderful Colombian owner, such a vibe.",
+          name: "Amazing Coffee (Colombian owner)",
+          position: { lat: 40.4112, lng: -3.7035 },
+          description: "Great vibe, Colombian owner – hot spot.",
           address: "C. de San Millán, 4, Centro, 28012 Madrid, Spain"
         },
         {
+          country: "Spain",
           city: "Madrid",
           name: "Hot Now Pizza",
-          position: { lat: 40.423, lng: -3.698 },
-          description: "Great pizza, popular spot.",
+          position: { lat: 40.4235, lng: -3.6994 },
+          description: "Great pizza spot.",
           address: "C. de Barbieri, 14, Centro, 28004 Madrid, Spain"
         },
         {
+          country: "Spain",
           city: "Madrid",
           name: "Han So Café",
-          position: { lat: 40.426, lng: -3.705 },
-          description: "Trendy café in Malasaña.",
-          address: "Calle Pez 20, Barrio Malasaña, 28004 Madrid"
+          position: { lat: 40.4240, lng: -3.7060 },
+          description: "Trendy coffee + café spot in Malasaña.",
+          address: "Calle Pez 20, Barrio Malasaña, 28004, Madrid"
         },
         {
+          country: "Spain",
           city: "Madrid",
           name: "San Miguel Market",
-          position: { lat: 40.415, lng: -3.709 },
-          description: "Big iconic market – a must visit.",
-          address: "Plaza de San Miguel, 28005 Madrid"
+          position: { lat: 40.4154, lng: -3.7094 },
+          description: "Big, bustling market – must visit.",
+          address: "Plaza de San Miguel, 28005 Madrid, Spain"
         },
         {
-          city: "Madrid",
-          name: "The Market Madrid",
-          position: { lat: 40.439, lng: -3.676 },
-          description: "Food market with variety of options.",
-          address: "C/ Príncipe de Vergara, 202, 28002 Madrid"
-        },
-        {
+          country: "Spain",
           city: "Madrid",
           name: "Honest Greens",
-          position: { lat: 40.449, lng: -3.690 },
-          description: "Any location – cheap & healthy food.",
-          address: "Paseo de la Castellana, 89, 28046 Madrid"
+          position: { lat: 40.4512, lng: -3.6889 },
+          description: "Cheap & healthy food – any location works.",
+          address: "Paseo de la Castellana, 89, 28046, Madrid"
         },
         {
+          country: "Spain",
           city: "Madrid",
-          name: "Humana (Thrift)",
-          position: { lat: 40.421, lng: -3.671 },
-          description: "Great deals, €2 finds, rotating discounts.",
-          address: "Calle de Alcalá, 171, 28009 Madrid"
+          name: "Humana (Thrift Store)",
+          position: { lat: 40.4236, lng: -3.6717 },
+          description: "Great deals, some items from €2, discounts on certain days.",
+          address: "Calle de Alcalá, 171, 28009, Madrid"
         },
         {
+          country: "Spain",
           city: "Madrid",
-          name: "By Pillow Hotel",
-          position: { lat: 40.414, lng: -3.704 },
+          name: "By Pillow Hostel",
+          position: { lat: 40.4107, lng: -3.7026 },
           description: "Great location, friendly staff.",
-          address: "Calle de Jesús y María, 12, 28012 Madrid"
+          address: "Calle de Jesús y María, 12, 28012, Madrid"
         },
         {
+          country: "Spain",
           city: "Madrid",
           name: "Ambu Nuñez Café",
-          position: { lat: 40.429, lng: -3.684 },
-          description: "Two locations – excellent coffee, cold brew amazing.",
-          address: "Calle Nuñez de Balboa, 28, 28001 Madrid"
+          position: { lat: 40.4292, lng: -3.6831 },
+          description: "Excellent coffee – cold brew is amazing. Two locations.",
+          address: "Calle Nuñez de Balboa 28, 28001 Madrid, Spain"
         },
         {
+          country: "Spain",
           city: "Madrid",
           name: "Alma Nomad Bakery",
-          position: { lat: 40.436, lng: -3.697 },
-          description: "Two locations – bakery & pizza spot.",
-          address: "C/ Sta. Feliciana 10 & C/ Los Urquiza 17, Madrid"
+          position: { lat: 40.4368, lng: -3.7009 },
+          description: "Great bakery – two locations, plus pizza shop nearby.",
+          address: "C/ Sta. Feliciana 10, 28010 Madrid, Spain"
         },
         {
+          country: "Spain",
           city: "Madrid",
-          name: "Alma Pizza",
-          position: { lat: 40.436, lng: -3.696 },
-          description: "Their pizza store – cozy & tasty.",
-          address: "C. de Sta. Feliciana, 4, 28010 Madrid"
+          name: "Alma Nomad Pizza",
+          position: { lat: 40.4365, lng: -3.7015 },
+          description: "Delicious pizza by Alma Nomad Bakery.",
+          address: "C. de Sta. Feliciana, 4, 28010 Madrid, Spain"
         },
-        {
-          city: "Madrid",
-          name: "Pizza Pronto",
-          position: { lat: 40.437, lng: -3.695 },
-          description: "Fast & delicious pizza.",
-          address: "Madrid, Spain"
-        },
-
         // Barcelona
         {
+          country: "Spain",
           city: "Barcelona",
           name: "De La Creme",
           position: { lat: 41.3907, lng: 2.1594 },
@@ -212,6 +218,7 @@
           address: "Carrer d'Enric Granados, 15, 08007 Barcelona, Spain"
         },
         {
+          country: "Spain",
           city: "Barcelona",
           name: "Honest Greens",
           position: { lat: 41.3888, lng: 2.1590 },
@@ -219,6 +226,7 @@
           address: "Various locations, Barcelona, Spain"
         },
         {
+          country: "Spain",
           city: "Barcelona",
           name: "Hotel Market",
           position: { lat: 41.3787, lng: 2.1598 },
@@ -226,6 +234,7 @@
           address: "Carrer del Comte Borrell, 68, 08015 Barcelona, Spain"
         },
         {
+          country: "Spain",
           city: "Barcelona",
           name: "Papa Dâm",
           position: { lat: 41.3779, lng: 2.1623 },
@@ -233,6 +242,7 @@
           address: "Rda. de Sant Pau, 11, 08015 Barcelona, Spain"
         },
         {
+          country: "Spain",
           city: "Barcelona",
           name: "Origo",
           position: { lat: 41.3778, lng: 2.1638 },
@@ -242,45 +252,59 @@
       ];
 
       const list = document.getElementById("place-list");
-      let currentCity = "";
 
-      places.forEach((place) => {
-        if (place.city !== currentCity) {
-          currentCity = place.city;
-          const cityHeader = document.createElement("div");
-          cityHeader.className = "city";
-          cityHeader.textContent = currentCity;
-          list.appendChild(cityHeader);
+      const grouped = {};
+      places.forEach(place => {
+        if (!grouped[place.country]) grouped[place.country] = {};
+        if (!grouped[place.country][place.city]) grouped[place.country][place.city] = [];
+        grouped[place.country][place.city].push(place);
+      });
+
+      Object.keys(grouped).forEach(country => {
+        const countryDetails = document.createElement("details");
+        countryDetails.open = false;
+        const countrySummary = document.createElement("summary");
+        countrySummary.textContent = country;
+        countryDetails.appendChild(countrySummary);
+
+        Object.keys(grouped[country]).forEach(city => {
+          const cityDetails = document.createElement("details");
+          const citySummary = document.createElement("summary");
+          citySummary.textContent = city;
+          cityDetails.appendChild(citySummary);
 
           const ul = document.createElement("ul");
-          ul.id = `${currentCity}-list`;
-          list.appendChild(ul);
-        }
+          grouped[country][city].forEach(place => {
+            const marker = new google.maps.Marker({
+              position: place.position,
+              map: map,
+              title: place.name
+            });
 
-        const marker = new google.maps.Marker({
-          position: place.position,
-          map: map,
-          title: place.name
+            const infoWindow = new google.maps.InfoWindow({
+              content: `<h3>${place.name}</h3><p>${place.description}</p><p><em>${place.address}</em></p>`
+            });
+
+            marker.addListener("click", () => {
+              infoWindow.open(map, marker);
+            });
+
+            const li = document.createElement("li");
+            li.innerHTML = `<strong>${place.name}</strong><br><small>${place.description}</small>`;
+            li.addEventListener("click", () => {
+              map.setCenter(place.position);
+              map.setZoom(15);
+              infoWindow.open(map, marker);
+              document.getElementById("map").scrollIntoView({ behavior: "smooth" });
+            });
+            ul.appendChild(li);
+          });
+
+          cityDetails.appendChild(ul);
+          countryDetails.appendChild(cityDetails);
         });
 
-        const infoWindow = new google.maps.InfoWindow({
-          content: `<h3>${place.name}</h3><p>${place.description}</p><p><em>${place.address}</em></p>`
-        });
-
-        marker.addListener("click", () => {
-          infoWindow.open(map, marker);
-        });
-
-        const ul = document.getElementById(`${place.city}-list`);
-        const li = document.createElement("li");
-        li.innerHTML = `<strong>${place.name}</strong><br><small>${place.description}</small>`;
-        li.addEventListener("click", () => {
-          map.setCenter(place.position);
-          map.setZoom(15);
-          infoWindow.open(map, marker);
-          document.getElementById("map").scrollIntoView({ behavior: "smooth" });
-        });
-        ul.appendChild(li);
+        list.appendChild(countryDetails);
       });
     }
   </script>
@@ -300,3 +324,4 @@
   </footer>
 </body>
 </html>
+
