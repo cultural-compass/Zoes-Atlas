@@ -1,119 +1,99 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Zoe Atlas</title>
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #fff;
-        }
-
-        h1 {
-            text-align: center;
-            padding: 20px;
-            color: #e91e63; /* Zoe Pink */
-        }
-
-        #description {
-            text-align: center;
-            padding: 10px 20px;
-            color: #4caf50; /* Zoe Green */
-            font-size: 1.1em;
-        }
-
-        #map {
-            width: 100%;
-            height: 500px;
-        }
-
-        #location-list {
-            list-style-type: none;
-            padding: 20px;
-        }
-
-        #location-list li {
-            cursor: pointer;
-            margin: 5px 0;
-            color: #333;
-        }
-
-        #location-list li:hover {
-            color: #e91e63; /* highlight on hover */
-        }
-
-        footer {
-            clear: both;
-            width: 100%;
-            text-align: center;
-            padding: 10px 0;
-            background-color: #f8f8f8;
-            position: relative;
-            bottom: 0;
-            color: #333;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zoe Atlas: Dublin</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #fff;
+      color: #333;
+    }
+    header {
+      background-color: #ff69b4; /* Zoe pink */
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    p.intro {
+      color: #32cd32; /* Zoe green */
+      font-size: 1.2em;
+      text-align: center;
+      padding: 10px 20px;
+    }
+    #map {
+      height: 600px;
+      width: 100%;
+    }
+  </style>
 </head>
 <body>
-    <h1>The Zoe Atlas</h1>
+  <header>
+    <h1>Zoe Atlas: Dublin</h1>
+  </header>
+  <p class="intro">
+    Hey love bugs! 💌 Explore some of my favorite Black-friendly and culturally rich spots in Dublin. Click the markers on the map to see descriptions and highlights!
+  </p>
 
-    <div id="description">
-        Welcome to <strong>The Zoe Atlas</strong> – your guide to Black-friendly, culturally rich, and locally loved destinations across the globe. Explore curated spots, discover hidden gems, and support communities wherever you travel.
-    </div>
+  <div id="map"></div>
 
-    <div id="map"></div>
+  <script>
+    function initMap() {
+      const dublin = { lat: 53.344, lng: -6.267 };
+      const map = new google.maps.Map(document.getElementById("map"), {
+        zoom: 14,
+        center: dublin,
+      });
 
-    <ul id="location-list">
-        <li>Dublin, Ireland
-            <ul>
-                <li data-lat="53.3412" data-lng="-6.2675" data-category="shopping">Nine Crows Vintage, 22 Temple Lane S</li>
-                <li data-lat="53.3425" data-lng="-6.2660" data-category="shopping">Lou's Lot, George's Street Arcade</li>
-                <li data-lat="53.3431" data-lng="-6.2629" data-category="food">Copper and Straw, Aston Quay, Temple Bar</li>
-                <li data-lat="53.3440" data-lng="-6.2658" data-category="food">Bambino's, 37 Stephen Street Lower</li>
-                <li data-lat="53.3452" data-lng="-6.2631" data-category="shopping">The Big Smoke Vintage Clothing, Merchant's Arch</li>
-            </ul>
-        </li>
-    </ul>
+      const locations = [
+        {
+          name: "Nine Crows Vintage",
+          position: { lat: 53.343, lng: -6.262 },
+          description: "🛍️ Curated vintage & Y2K clothing treasures—fun, eclectic, and a must-visit for fashion lovers."
+        },
+        {
+          name: "Copper & Straw",
+          position: { lat: 53.344, lng: -6.267 },
+          description: "☕ Great coffee, cozy vibes, and a welcoming spot to recharge while exploring Dublin."
+        },
+        {
+          name: "George's Street Arcade",
+          position: { lat: 53.3435, lng: -6.2675 },
+          description: "🎨 Open-air market with eclectic stalls and local flair—perfect for browsing unique finds."
+        },
+        {
+          name: "Lou's Lot",
+          position: { lat: 53.3437, lng: -6.268 },
+          description: "👗 Luxury vintage curated for style seekers—small but packed with treasures."
+        },
+        {
+          name: "The Big Smoke Vintage Clothing",
+          position: { lat: 53.3428, lng: -6.269 },
+          description: "🛒 Classic vintage pieces with a modern twist—great for statement looks."
+        },
+      ];
 
-    <footer>
-        <p>&copy; 2025 Zoe Atlas | All Rights Reserved</p>
-    </footer>
+      locations.forEach((loc) => {
+        const marker = new google.maps.Marker({
+          position: loc.position,
+          map: map,
+          title: loc.name,
+        });
 
-    <script>
-        function initMap() {
-            const map = new google.maps.Map(document.getElementById("map"), {
-                zoom: 13,
-                center: { lat: 53.3438, lng: -6.2625 }
-            });
+        const infoWindow = new google.maps.InfoWindow({
+          content: `<strong>${loc.name}</strong><br>${loc.description}`,
+        });
 
-            const categoryColors = {
-                "food": "http://maps.google.com/mapfiles/ms/icons/pink-dot.png",
-                "shopping": "http://maps.google.com/mapfiles/ms/icons/green-dot.png",
-                "culture": "http://maps.google.com/mapfiles/ms/icons/purple-dot.png"
-            };
+        marker.addListener("click", () => {
+          infoWindow.open(map, marker);
+        });
+      });
+    }
+  </script>
 
-            const locations = document.querySelectorAll('#location-list li[data-lat][data-lng]');
-            locations.forEach(location => {
-                const lat = parseFloat(location.getAttribute('data-lat'));
-                const lng = parseFloat(location.getAttribute('data-lng'));
-                const category = location.getAttribute('data-category');
-                const marker = new google.maps.Marker({
-                    position: { lat: lat, lng: lng },
-                    map: map,
-                    title: location.innerText,
-                    icon: categoryColors[category] || null
-                });
-
-                location.addEventListener('click', () => {
-                    map.panTo({ lat: lat, lng: lng });
-                    map.setZoom(16);
-                });
-            });
-        }
-    </script>
-
-    <script async defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB38rOcYSnjrdPynqMR6i0vpP8ZYi1Z2W4&callback=initMap">
-    </script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB38rOcYSnjrdPynqMR6i0vpP8ZYi1Z2W4&callback=initMap" async defer></script>
 </body>
 </html>
