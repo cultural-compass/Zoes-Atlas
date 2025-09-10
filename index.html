@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Zoe Atlas: Dublin</title>
+  <title>Zoe Atlas 🐞</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -13,13 +13,13 @@
       color: #333;
     }
     header {
-      background-color: #ff69b4; /* Zoe pink */
+      background-color: #e75480; /* softened Zoe pink */
       color: white;
       padding: 20px;
       text-align: center;
     }
     p.intro {
-      color: #32cd32; /* Zoe green */
+      color: #28a745; /* softened Zoe green */
       font-size: 1.2em;
       text-align: center;
       padding: 10px 20px;
@@ -31,11 +31,11 @@
     }
     h2 {
       text-align: center;
-      color: #ff69b4;
+      color: #e75480;
       margin-bottom: 10px;
     }
     ul.location-list {
-      color: #32cd32;
+      color: #28a745;
       font-size: 1.1em;
       list-style: none;
       padding: 0 20px 40px 20px;
@@ -47,14 +47,15 @@
 </head>
 <body>
   <header>
-    <h1>Zoe Atlas: Dublin</h1>
+    <h1>Zoe Atlas 🐞</h1>
   </header>
   <p class="intro">
-    Hey love bugs! 💌 Explore some of my favorite Black-friendly and culturally rich spots in Dublin. Click the markers on the map to see descriptions and highlights!
+    Hey love bugs! 💌 Explore some of my favorite Black-friendly and culturally rich spots around the globe. Click the markers on the map to see descriptions and highlights!
   </p>
 
   <div id="map"></div>
 
+  <!-- Dublin List -->
   <h2>Dublin Locations</h2>
   <ul class="location-list">
     <li>Nine Crows Vintage 🛍️</li>
@@ -64,43 +65,43 @@
     <li>The Big Smoke Vintage Clothing 🛒</li>
   </ul>
 
+  <!-- Barcelona List -->
+  <h2>Barcelona Locations</h2>
+  <ul class="location-list">
+    <li>De La Creme 🛍️ - Carrer d'Enric Granados, 15, L'Eixample, 08007 (great gelato, friendly staff)</li>
+    <li>Honest Greens 🥗 - Any location is a safe bet, great food and good prices</li>
+    <li>Hotel Market 🏨 - Carrer del Comte Borrell, 68, L'Eixample, 08015 (friendly staff, great accommodation, excellent location)</li>
+    <li>Papa Dam 🍴 - Rda. de Sant Pau, 11, Eixample, 08015 (great staff, delicious food! Get the garlic rice)</li>
+    <li>Origo ☕ - Rda. de Sant Pau, 67, L'Eixample, 08015 (amazing staff, get the cardamom bun, cute place, good coffee)</li>
+  </ul>
+
   <script>
     function initMap() {
-      const dublin = { lat: 53.344, lng: -6.267 };
+      const mapCenter = { lat: 48.8566, lng: 2.3522 }; // center in Europe
       const map = new google.maps.Map(document.getElementById("map"), {
-        zoom: 14,
-        center: dublin,
+        zoom: 5,
+        center: mapCenter,
       });
 
-      const locations = [
-        {
-          name: "Nine Crows Vintage",
-          position: { lat: 53.343, lng: -6.262 },
-          description: "🛍️ Curated vintage & Y2K clothing treasures—fun, eclectic, and a must-visit for fashion lovers."
-        },
-        {
-          name: "Copper & Straw",
-          position: { lat: 53.344, lng: -6.267 },
-          description: "☕ Great coffee, cozy vibes, and a welcoming spot to recharge while exploring Dublin."
-        },
-        {
-          name: "George's Street Arcade",
-          position: { lat: 53.3435, lng: -6.2675 },
-          description: "🎨 Open-air market with eclectic stalls and local flair—perfect for browsing unique finds."
-        },
-        {
-          name: "Lou's Lot",
-          position: { lat: 53.3437, lng: -6.268 },
-          description: "👗 Luxury vintage curated for style seekers—small but packed with treasures."
-        },
-        {
-          name: "The Big Smoke Vintage Clothing",
-          position: { lat: 53.3428, lng: -6.269 },
-          description: "🛒 Classic vintage pieces with a modern twist—great for statement looks."
-        },
+      const dublinLocations = [
+        { name: "Nine Crows Vintage", position: { lat: 53.343, lng: -6.262 }, description: "🛍️ Curated vintage & Y2K clothing treasures—fun, eclectic, and a must-visit for fashion lovers." },
+        { name: "Copper & Straw", position: { lat: 53.344, lng: -6.267 }, description: "☕ Great coffee, cozy vibes, and a welcoming spot while exploring Dublin." },
+        { name: "George's Street Arcade", position: { lat: 53.3435, lng: -6.2675 }, description: "🎨 Open-air market with eclectic stalls and local flair." },
+        { name: "Lou's Lot", position: { lat: 53.3437, lng: -6.268 }, description: "👗 Luxury vintage curated for style seekers." },
+        { name: "The Big Smoke Vintage Clothing", position: { lat: 53.3428, lng: -6.269 }, description: "🛒 Classic vintage pieces with a modern twist." },
       ];
 
-      locations.forEach((loc) => {
+      const barcelonaLocations = [
+        { name: "De La Creme", position: { lat: 41.3916, lng: 2.1635 }, description: "🛍️ Great gelato, friendly staff." },
+        { name: "Honest Greens", position: { lat: 41.3892, lng: 2.1610 }, description: "🥗 Any location is a safe bet, great food and good prices." },
+        { name: "Hotel Market", position: { lat: 41.3849, lng: 2.1510 }, description: "🏨 Friendly staff, great accommodation, excellent location." },
+        { name: "Papa Dam", position: { lat: 41.3840, lng: 2.1550 }, description: "🍴 Great staff, delicious food! Get the garlic rice." },
+        { name: "Origo", position: { lat: 41.3845, lng: 2.1555 }, description: "☕ Amazing staff, get the cardamom bun, cute place, good coffee." },
+      ];
+
+      const allLocations = [...dublinLocations, ...barcelonaLocations];
+
+      allLocations.forEach((loc) => {
         const marker = new google.maps.Marker({
           position: loc.position,
           map: map,
@@ -123,4 +124,7 @@
 </html>
 
 
+
+
+      
 
