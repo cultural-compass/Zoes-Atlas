@@ -62,14 +62,14 @@
       margin-top: 20px;
     }
   </style>
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB38rOcYSnjrdPynqMR6i0vpP8ZYi1Z2W4"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY"></script>
   <script>
     let map;
 
     function initMap() {
       map = new google.maps.Map(document.getElementById("map"), {
         zoom: 12,
-        center: { lat: 53.3498, lng: -6.2603 } // Default center: Dublin
+        center: { lat: 53.3498, lng: -6.2603 } // Default: Dublin
       });
 
       const places = [
@@ -116,6 +116,93 @@
           description: "Vintage treasures by Merchant’s Arch.",
           address: "Merchant's Arch, Dublin 2, D02 WP27, Ireland"
         },
+
+        // Madrid
+        {
+          city: "Madrid",
+          name: "Coffee Wonder",
+          position: { lat: 40.410, lng: -3.702 },
+          description: "Amazing coffee, wonderful Colombian owner, such a vibe.",
+          address: "C. de San Millán, 4, Centro, 28012 Madrid, Spain"
+        },
+        {
+          city: "Madrid",
+          name: "Hot Now Pizza",
+          position: { lat: 40.423, lng: -3.698 },
+          description: "Great pizza, popular spot.",
+          address: "C. de Barbieri, 14, Centro, 28004 Madrid, Spain"
+        },
+        {
+          city: "Madrid",
+          name: "Han So Café",
+          position: { lat: 40.426, lng: -3.705 },
+          description: "Trendy café in Malasaña.",
+          address: "Calle Pez 20, Barrio Malasaña, 28004 Madrid"
+        },
+        {
+          city: "Madrid",
+          name: "San Miguel Market",
+          position: { lat: 40.415, lng: -3.709 },
+          description: "Big iconic market – a must visit.",
+          address: "Plaza de San Miguel, 28005 Madrid"
+        },
+        {
+          city: "Madrid",
+          name: "The Market Madrid",
+          position: { lat: 40.439, lng: -3.676 },
+          description: "Food market with variety of options.",
+          address: "C/ Príncipe de Vergara, 202, 28002 Madrid"
+        },
+        {
+          city: "Madrid",
+          name: "Honest Greens",
+          position: { lat: 40.449, lng: -3.690 },
+          description: "Any location – cheap & healthy food.",
+          address: "Paseo de la Castellana, 89, 28046 Madrid"
+        },
+        {
+          city: "Madrid",
+          name: "Humana (Thrift)",
+          position: { lat: 40.421, lng: -3.671 },
+          description: "Great deals, €2 finds, rotating discounts.",
+          address: "Calle de Alcalá, 171, 28009 Madrid"
+        },
+        {
+          city: "Madrid",
+          name: "By Pillow Hotel",
+          position: { lat: 40.414, lng: -3.704 },
+          description: "Great location, friendly staff.",
+          address: "Calle de Jesús y María, 12, 28012 Madrid"
+        },
+        {
+          city: "Madrid",
+          name: "Ambu Nuñez Café",
+          position: { lat: 40.429, lng: -3.684 },
+          description: "Two locations – excellent coffee, cold brew amazing.",
+          address: "Calle Nuñez de Balboa, 28, 28001 Madrid"
+        },
+        {
+          city: "Madrid",
+          name: "Alma Nomad Bakery",
+          position: { lat: 40.436, lng: -3.697 },
+          description: "Two locations – bakery & pizza spot.",
+          address: "C/ Sta. Feliciana 10 & C/ Los Urquiza 17, Madrid"
+        },
+        {
+          city: "Madrid",
+          name: "Alma Pizza",
+          position: { lat: 40.436, lng: -3.696 },
+          description: "Their pizza store – cozy & tasty.",
+          address: "C. de Sta. Feliciana, 4, 28010 Madrid"
+        },
+        {
+          city: "Madrid",
+          name: "Pizza Pronto",
+          position: { lat: 40.437, lng: -3.695 },
+          description: "Fast & delicious pizza.",
+          address: "Madrid, Spain"
+        },
+
         // Barcelona
         {
           city: "Barcelona",
@@ -158,7 +245,6 @@
       let currentCity = "";
 
       places.forEach((place) => {
-        // Add city header if new
         if (place.city !== currentCity) {
           currentCity = place.city;
           const cityHeader = document.createElement("div");
@@ -171,7 +257,6 @@
           list.appendChild(ul);
         }
 
-        // Create marker
         const marker = new google.maps.Marker({
           position: place.position,
           map: map,
@@ -186,7 +271,6 @@
           infoWindow.open(map, marker);
         });
 
-        // Add to clickable list under its city
         const ul = document.getElementById(`${place.city}-list`);
         const li = document.createElement("li");
         li.innerHTML = `<strong>${place.name}</strong><br><small>${place.description}</small>`;
