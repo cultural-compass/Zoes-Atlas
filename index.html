@@ -29,6 +29,15 @@
       margin-top: 0;
       color: #ff3399;
     }
+    .city {
+      margin-top: 20px;
+      font-size: 1.4em;
+      font-weight: bold;
+      color: #222;
+      border-bottom: 2px solid #ccc;
+      padding-bottom: 5px;
+      margin-bottom: 10px;
+    }
     ul {
       list-style: none;
       padding: 0;
@@ -56,7 +65,6 @@
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB38rOcYSnjrdPynqMR6i0vpP8ZYi1Z2W4"></script>
   <script>
     let map;
-    let markers = [];
 
     function initMap() {
       map = new google.maps.Map(document.getElementById("map"), {
@@ -67,66 +75,103 @@
       const places = [
         // Dublin
         {
+          city: "Dublin",
           name: "Nine Crows Vintage",
           position: { lat: 53.3437, lng: -6.2646 },
-          description: "Curated Y2K vintage – diverse staff, fun vibe."
+          description: "Curated Y2K vintage – diverse staff, fun vibe.",
+          address: "22 Temple Lane S, Dublin 2, D02 HP52, Ireland"
         },
         {
+          city: "Dublin",
           name: "Lou's Lot (George's Street Arcade)",
           position: { lat: 53.3425, lng: -6.2634 },
-          description: "Luxury vintage inside the arcade."
+          description: "Luxury vintage inside the arcade.",
+          address: "South Great George's Street, Dublin 2, Ireland"
         },
         {
+          city: "Dublin",
           name: "Copper and Straw",
           position: { lat: 53.3461, lng: -6.2638 },
-          description: "Great coffee & friendly staff."
+          description: "Great coffee & friendly staff.",
+          address: "Aston Quay, Temple Bar, Dublin, D02 FV38, Ireland"
         },
         {
+          city: "Dublin",
           name: "George's Arcade",
           position: { lat: 53.3430, lng: -6.2635 },
-          description: "Open-air market full of character."
+          description: "Open-air market full of character.",
+          address: "South Great George's Street, Dublin 2, Ireland"
         },
         {
+          city: "Dublin",
           name: "Bambino's",
           position: { lat: 53.3395, lng: -6.2651 },
-          description: "Cozy pizza spot, local favorite."
+          description: "Cozy pizza spot, local favorite.",
+          address: "37 Stephen Street Lower, Dublin 2, D02 T862, Ireland"
         },
         {
+          city: "Dublin",
           name: "The Big Smoke Vintage Clothing",
           position: { lat: 53.3452, lng: -6.2639 },
-          description: "Vintage treasures by Merchant’s Arch."
+          description: "Vintage treasures by Merchant’s Arch.",
+          address: "Merchant's Arch, Dublin 2, D02 WP27, Ireland"
         },
         // Barcelona
         {
+          city: "Barcelona",
           name: "De La Creme",
           position: { lat: 41.3907, lng: 2.1594 },
-          description: "Great gelato & friendly staff."
+          description: "Great gelato & friendly staff.",
+          address: "Carrer d'Enric Granados, 15, 08007 Barcelona, Spain"
         },
         {
+          city: "Barcelona",
           name: "Honest Greens",
           position: { lat: 41.3888, lng: 2.1590 },
-          description: "Healthy, delicious food at good prices."
+          description: "Healthy, delicious food at good prices.",
+          address: "Various locations, Barcelona, Spain"
         },
         {
+          city: "Barcelona",
           name: "Hotel Market",
           position: { lat: 41.3787, lng: 2.1598 },
-          description: "Excellent location, great staff & accommodations."
+          description: "Excellent location, great staff & accommodations.",
+          address: "Carrer del Comte Borrell, 68, 08015 Barcelona, Spain"
         },
         {
+          city: "Barcelona",
           name: "Papa Dâm",
           position: { lat: 41.3779, lng: 2.1623 },
-          description: "Delicious food – try the garlic rice!"
+          description: "Delicious food – try the garlic rice!",
+          address: "Rda. de Sant Pau, 11, 08015 Barcelona, Spain"
         },
         {
+          city: "Barcelona",
           name: "Origo",
           position: { lat: 41.3778, lng: 2.1638 },
-          description: "Amazing staff, cardamom bun + coffee spot."
+          description: "Amazing staff, cardamom bun + coffee spot.",
+          address: "Rda. de Sant Pau, 67, 08015 Barcelona, Spain"
         }
       ];
 
       const list = document.getElementById("place-list");
+      let currentCity = "";
 
-      places.forEach((place, index) => {
+      places.forEach((place) => {
+        // Add city header if new
+        if (place.city !== currentCity) {
+          currentCity = place.city;
+          const cityHeader = document.createElement("div");
+          cityHeader.className = "city";
+          cityHeader.textContent = currentCity;
+          list.appendChild(cityHeader);
+
+          const ul = document.createElement("ul");
+          ul.id = `${currentCity}-list`;
+          list.appendChild(ul);
+        }
+
+        // Create marker
         const marker = new google.maps.Marker({
           position: place.position,
           map: map,
@@ -134,27 +179,24 @@
         });
 
         const infoWindow = new google.maps.InfoWindow({
-          content: `<h3>${place.name}</h3><p>${place.description}</p>`
+          content: `<h3>${place.name}</h3><p>${place.description}</p><p><em>${place.address}</em></p>`
         });
 
         marker.addListener("click", () => {
           infoWindow.open(map, marker);
         });
 
-        markers.push({ marker, infoWindow });
-
-        // Add to clickable list
+        // Add to clickable list under its city
+        const ul = document.getElementById(`${place.city}-list`);
         const li = document.createElement("li");
         li.innerHTML = `<strong>${place.name}</strong><br><small>${place.description}</small>`;
         li.addEventListener("click", () => {
           map.setCenter(place.position);
           map.setZoom(15);
           infoWindow.open(map, marker);
-
-          // smooth scroll to map
           document.getElementById("map").scrollIntoView({ behavior: "smooth" });
         });
-        list.appendChild(li);
+        ul.appendChild(li);
       });
     }
   </script>
@@ -162,12 +204,12 @@
 <body onload="initMap()">
   <header>
     <h1>Zoe Atlas 🐞</h1>
-    <p>Explore curated spots in Dublin & Barcelona</p>
+    <p>Curated, Black-friendly, and welcoming spots across the globe</p>
   </header>
   <div id="map"></div>
   <div class="places">
     <h2>Places</h2>
-    <ul id="place-list"></ul>
+    <div id="place-list"></div>
   </div>
   <footer>
     <p>Curated with ❤️ by Zoe</p>
