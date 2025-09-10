@@ -77,9 +77,49 @@
 
   <script>
     function initMap() {
-      const mapCenter = { lat: 48.8566, lng: 2.3522 }; // center in Europe
+      // Center map in Europe
+      const mapCenter = { lat: 48.8566, lng: 2.3522 };
       const map = new google.maps.Map(document.getElementById("map"), {
         zoom: 5,
         center: mapCenter,
       });
 
+      const dublinLocations = [
+        { name: "Nine Crows Vintage 🛍️", position: { lat: 53.343, lng: -6.262 }, description: "22 Temple Lane S, Dublin 2 D02 HP52 - Curated vintage & Y2K clothing treasures—fun, eclectic, and a must-visit for fashion lovers." },
+        { name: "Copper & Straw ☕", position: { lat: 53.344, lng: -6.267 }, description: "Aston Quay, Temple Bar, Dublin, Ireland D02FV38 - Great coffee, cozy vibes, and a welcoming spot while exploring Dublin." },
+        { name: "George's Street Arcade 🎨", position: { lat: 53.3435, lng: -6.2675 }, description: "South Great George's Street, Dublin 2 - Open-air market with eclectic stalls and local flair." },
+        { name: "Lou's Lot 👗", position: { lat: 53.3437, lng: -6.268 }, description: "Inside George's Arcade - Luxury vintage curated for style seekers." },
+        { name: "The Big Smoke Vintage Clothing 🛒", position: { lat: 53.3428, lng: -6.269 }, description: "Merchant's Arch, Dublin D02 WP27 - Classic vintage pieces with a modern twist." },
+      ];
+
+      const barcelonaLocations = [
+        { name: "De La Creme 🛍️", position: { lat: 41.3916, lng: 2.1635 }, description: "Carrer d'Enric Granados, 15, L'Eixample, 08007 - Great gelato, friendly staff." },
+        { name: "Honest Greens 🥗", position: { lat: 41.3892, lng: 2.1610 }, description: "Any location is a safe bet, great food and good prices." },
+        { name: "Hotel Market 🏨", position: { lat: 41.3849, lng: 2.1510 }, description: "Carrer del Comte Borrell, 68, L'Eixample, 08015 - Friendly staff, great accommodation, excellent location." },
+        { name: "Papa Dam 🍴", position: { lat: 41.3840, lng: 2.1550 }, description: "Rda. de Sant Pau, 11, Eixample, 08015 - Great staff, delicious food! Get the garlic rice." },
+        { name: "Origo ☕", position: { lat: 41.3845, lng: 2.1555 }, description: "Rda. de Sant Pau, 67, L'Eixample, 08015 - Amazing staff, get the cardamom bun, cute place, good coffee." },
+      ];
+
+      const allLocations = [...dublinLocations, ...barcelonaLocations];
+
+      allLocations.forEach((loc) => {
+        const marker = new google.maps.Marker({
+          position: loc.position,
+          map: map,
+          title: loc.name,
+        });
+
+        const infoWindow = new google.maps.InfoWindow({
+          content: `<strong>${loc.name}</strong><br>${loc.description}`,
+        });
+
+        marker.addListener("click", () => {
+          infoWindow.open(map, marker);
+        });
+      });
+    }
+  </script>
+
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB38rOcYSnjrdPynqMR6i0vpP8ZYi1Z2W4&callback=initMap" async defer></script>
+</body>
+</html>
