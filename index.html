@@ -11,6 +11,9 @@
       color: #333;
       margin: 0;
       padding: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
     }
     header {
       background-color: #ff66b2;
@@ -18,15 +21,57 @@
       text-align: center;
       padding: 20px;
     }
+    .main-container {
+      display: flex;
+      flex-grow: 1;
+      flex-direction: column;
+    }
+    @media (min-width: 768px) {
+      .main-container {
+        flex-direction: row;
+      }
+    }
+    #sidebar {
+      width: 100%;
+      background-color: #e6ffe6;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    @media (min-width: 768px) {
+      #sidebar {
+        width: 350px;
+        max-height: calc(100vh - 84px); /* Adjust based on header/footer size */
+        border-right: 2px solid #ff66b2;
+      }
+    }
     #map {
       height: 500px;
       width: 100%;
     }
-    .places {
-      background-color: #e6ffe6;
-      padding: 20px;
+    @media (min-width: 768px) {
+      #map {
+        height: auto;
+        flex-grow: 1;
+      }
     }
-    .places h2 {
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    .controls input[type="text"] {
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      flex-grow: 1;
+    }
+    .controls select {
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .places-list h2 {
       margin-top: 0;
       color: #ff3399;
     }
@@ -65,13 +110,14 @@
       color: white;
       text-align: center;
       padding: 10px;
-      margin-top: 20px;
+      margin-top: auto;
     }
   </style>
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB38rOcYSnjrdPynqMR6i0vpP8ZYi1Z2W4"></script>
   <script>
     let map;
-
+    let markers = [];
+    
     const categoryEmoji = {
       hotel: "🏨",
       restaurant: "🍽️",
@@ -431,16 +477,39 @@
       }
     ];
 
-    function initMap() {
-      map = new google.maps.Map(document.getElementById("map"), {
-        zoom: 5,
-        center: { lat: 20, lng: -10 } // initial view
+    function createPlaceItem(place) {
+      const li = document.createElement("li");
+      li.innerHTML = `<strong>${categoryEmoji[place.category] || ""} ${place.name}</strong><br><small>${place.description}</small>`;
+      li.addEventListener("click", () => {
+        map.setCenter(place.position);
+        map.setZoom(15);
+        const marker = markers.find(m => m.title === place.name);
+        if (marker) {
+          const infoWindow = new google.maps.InfoWindow({
+            content: createInfoWindowContent(place)
+          });
+          infoWindow.open(map, marker);
+        }
       });
+      return li;
+    }
 
+    function createInfoWindowContent(place) {
+      return `
+        <h3>${categoryEmoji[place.category] || ""} ${place.name}</h3>
+        <p>${place.description}</p>
+        ${place.tip ? `<p><strong>Tip:</strong> ${place.tip}</p>` : ''}
+        ${place.link ? `<p><a href="${place.link}" target="_blank">More info</a></p>` : ''}
+        <p><em>${place.address}</em></p>
+      `;
+    }
+
+    function renderPlaces(filteredPlaces) {
       const list = document.getElementById("place-list");
+      list.innerHTML = '';
+      
       const grouped = {};
-
-      places.forEach(place => {
+      filteredPlaces.forEach(place => {
         if (!grouped[place.country]) grouped[place.country] = {};
         if (!grouped[place.country][place.city]) grouped[place.country][place.city] = [];
         grouped[place.country][place.city].push(place);
@@ -457,43 +526,10 @@
           const citySummary = document.createElement("summary");
           citySummary.textContent = city;
           cityDetails.appendChild(citySummary);
-
+          
           const ul = document.createElement("ul");
-
           grouped[country][city].forEach(place => {
-            const marker = new google.maps.Marker({
-              position: place.position,
-              map: map,
-              title: place.name,
-              animation: google.maps.Animation.DROP
-            });
-
-            const contentString = `
-              <h3>${categoryEmoji[place.category] || ""} ${place.name}</h3>
-              <p>${place.description}</p>
-              ${place.tip ? `<p><strong>Tip:</strong> ${place.tip}</p>` : ''}
-              ${place.link ? `<p><a href="${place.link}" target="_blank">More info</a></p>` : ''}
-              <p><em>${place.address}</em></p>
-            `;
-
-            const infoWindow = new google.maps.InfoWindow({
-              content: contentString
-            });
-
-            marker.addListener("click", () => {
-              infoWindow.open(map, marker);
-            });
-
-            const li = document.createElement("li");
-            li.innerHTML = `<strong>${categoryEmoji[place.category] || ""} ${place.name}</strong><br><small>${place.description}</small>`;
-            li.addEventListener("click", () => {
-              map.setCenter(place.position);
-              map.setZoom(15);
-              infoWindow.open(map, marker);
-              document.getElementById("map").scrollIntoView({ behavior: "smooth" });
-            });
-
-            ul.appendChild(li);
+            ul.appendChild(createPlaceItem(place));
           });
 
           cityDetails.appendChild(ul);
@@ -503,6 +539,61 @@
         list.appendChild(countryDetails);
       });
     }
+
+    function addMarkersToMap(filteredPlaces) {
+      // Clear existing markers
+      markers.forEach(marker => marker.setMap(null));
+      markers = [];
+      
+      filteredPlaces.forEach(place => {
+        const marker = new google.maps.Marker({
+          position: place.position,
+          map: map,
+          title: place.name,
+          animation: google.maps.Animation.DROP
+        });
+
+        const infoWindow = new google.maps.InfoWindow({
+          content: createInfoWindowContent(place)
+        });
+
+        marker.addListener("click", () => {
+          infoWindow.open(map, marker);
+        });
+
+        markers.push(marker);
+      });
+    }
+
+    function filterPlaces() {
+      const searchTerm = document.getElementById("search-bar").value.toLowerCase();
+      const categoryFilter = document.getElementById("category-filter").value;
+
+      const filtered = places.filter(place => {
+        const matchesSearch = place.name.toLowerCase().includes(searchTerm) || 
+                              place.description.toLowerCase().includes(searchTerm) ||
+                              place.address.toLowerCase().includes(searchTerm);
+        const matchesCategory = categoryFilter === "all" || place.category === categoryFilter;
+        return matchesSearch && matchesCategory;
+      });
+
+      renderPlaces(filtered);
+      addMarkersToMap(filtered);
+    }
+    
+    function initMap() {
+      map = new google.maps.Map(document.getElementById("map"), {
+        zoom: 5,
+        center: { lat: 20, lng: -10 }
+      });
+
+      renderPlaces(places);
+      addMarkersToMap(places);
+
+      // Add event listeners for search and filter
+      document.getElementById("search-bar").addEventListener("keyup", filterPlaces);
+      document.getElementById("category-filter").addEventListener("change", filterPlaces);
+    }
   </script>
 </head>
 <body onload="initMap()">
@@ -510,18 +601,28 @@
     <h1>Zoe Atlas 🐞</h1>
     <p>Curated, Black-friendly, and welcoming spots across the globe</p>
   </header>
-  <div id="map"></div>
-  <div class="places">
-    <h2>Places</h2>
-    <div id="place-list"></div>
+  <div class="main-container">
+    <div id="sidebar">
+      <div class="controls">
+        <input type="text" id="search-bar" placeholder="Search places..." aria-label="Search places">
+        <select id="category-filter" aria-label="Filter by category">
+          <option value="all">All Categories</option>
+          <option value="hotel">Hotels 🏨</option>
+          <option value="restaurant">Restaurants 🍽️</option>
+          <option value="coffee">Coffee ☕</option>
+          <option value="shop">Shops 🛍️</option>
+          <option value="gym">Gyms 💪</option>
+        </select>
+      </div>
+      <div class="places-list">
+        <h2>Places</h2>
+        <div id="place-list"></div>
+      </div>
+    </div>
+    <div id="map"></div>
   </div>
   <footer>
     <p>Curated with ❤️ by Zoe</p>
   </footer>
 </body>
 </html>
-
-
-
-
-
