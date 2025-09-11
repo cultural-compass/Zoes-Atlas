@@ -5,7 +5,7 @@ This project highlights destinations I’ve visited — organized by country and
 
 ## 🚀 Live Demo  
 Check it out here: [Zoe Atlas on GitHub Pages](https://culturalcompass.github.io/zoe-atlas/)  
-Or visit directly: https://cultural-compass.github.io/Zoe-Atlas/  
+Or visit directly: https://cultural-compass.github.io/Zoes-Atlas/  
 
 ## ✨ Features  
 - Dropdown navigation by country & city  
