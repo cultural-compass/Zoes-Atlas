@@ -1,292 +1,275 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Zoe's Atlas 🐞</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      height: 100vh;
-      overflow: hidden;
-    }
-    header {
-      background-color: #ff66b2;
-      color: white;
-      text-align: center;
-      padding: 15px 10px;
-      border-bottom: 4px solid #ff3399;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      z-index: 1200;
-    }
-    header h1 {
-      margin: 0;
-      font-size: 1.8em;
-    }
-    header p {
-      margin: 5px 0 0;
-      font-size: 1em;
-    }
+<meta charset="UTF-8">
+<title>Zoe's Atlas 🐞</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+  }
 
-    /* Sidebar */
+  /* Sidebar */
+  #sidebar {
+    width: 320px;
+    max-width: 80%;
+    background: #ffffff;
+    border-right: 3px solid #ff66b2;
+    padding: 15px;
+    position: relative;
+    overflow-y: auto;
+    flex-shrink: 0;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+  }
+  #sidebar h1 {
+    margin: 0;
+    font-size: 1.8em;
+    color: #ff3399;
+    text-align: center;
+  }
+  #sidebar p {
+    font-size: 0.95em;
+    margin: 10px 0 15px;
+    line-height: 1.4;
+    text-align: center;
+  }
+
+  /* Controls */
+  .controls {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 15px;
+  }
+  #search-bar {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+  }
+  #reset-view {
+    width: 100%;
+    padding: 8px;
+    border: none;
+    background-color: #ff66b2;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  /* Place list */
+  #place-list details {
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 5px;
+    background: #f9f9f9;
+  }
+  summary {
+    font-weight: bold;
+    cursor: pointer;
+  }
+  ul {
+    list-style: none;
+    padding: 0 0 0 10px;
+    margin: 5px 0 0 0;
+  }
+  li {
+    margin-bottom: 8px;
+    cursor: pointer;
+    padding: 6px;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    background: #fafafa;
+    transition: background 0.3s;
+  }
+  li:hover {
+    background: #f0f0f0;
+  }
+
+  /* Map */
+  #map {
+    flex: 1;
+    height: 100%;
+  }
+
+  /* Hamburger for mobile */
+  #hamburger {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 1100;
+    background: #ff66b2;
+    color: white;
+    border: none;
+    font-size: 24px;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    display: none;
+  }
+
+  /* Footer */
+  footer {
+    background-color: #ff66b2;
+    color: white;
+    text-align: center;
+    padding: 8px;
+    font-size: 0.9em;
+  }
+
+  /* Responsive */
+  @media(max-width: 768px){
     #sidebar {
-      width: 300px;
-      background: #f0fff0;
-      border-right: 3px solid #ff85c1;
-      overflow-y: auto;
-      padding: 10px;
       position: fixed;
-      top: 90px; /* under header */
+      left: -350px;
+      top: 0;
       bottom: 0;
-      left: 0;
+      z-index: 1000;
       transition: left 0.3s ease;
-      z-index: 1100;
-      display: flex;
-      flex-direction: column;
     }
-    #sidebar.closed {
-      left: -300px;
-    }
+    #sidebar.active { left: 0; }
+    #hamburger { display: block; }
+  }
+</style>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB38rOcYSnjrdPynqMR6i0vpP8ZYi1Z2W4"></script>
+<script>
+  let map;
+  let markers = [];
 
-    #map {
-      margin-left: 300px;
-      height: 100%;
-      margin-top: 90px; /* under header */
-      transition: margin-left 0.3s ease;
-    }
-    #map.full {
-      margin-left: 0;
-    }
+  const places = [
+    // Ireland (Dublin)
+    { country:"Ireland", city:"Dublin", name:"Nine Crows Vintage", position:{lat:53.3437,lng:-6.2646}, description:"Curated Y2K vintage – diverse staff, fun vibe.", address:"22 Temple Lane S, Dublin 2, D02 HP52, Ireland" },
+    { country:"Ireland", city:"Dublin", name:"Lou's Lot (George's Street Arcade)", position:{lat:53.3425,lng:-6.2634}, description:"Luxury vintage inside the arcade.", address:"South Great George's Street, Dublin 2, Ireland" },
+    { country:"Ireland", city:"Dublin", name:"Copper and Straw", position:{lat:53.3461,lng:-6.2638}, description:"Great coffee & friendly staff.", address:"Aston Quay, Temple Bar, Dublin, D02 FV38, Ireland" },
+    // Spain (Madrid)
+    { country:"Spain", city:"Madrid", name:"Amazing Coffee", position:{lat:40.4112,lng:-3.7035}, description:"Great vibe, Colombian owner – hot spot.", address:"C. de San Millán, 4, Centro, 28012 Madrid, Spain" },
+    { country:"Spain", city:"Madrid", name:"Hot Now Pizza", position:{lat:40.4235,lng:-3.6994}, description:"Great pizza spot.", address:"C. de Barbieri, 14, Centro, 28004 Madrid, Spain" },
+    // Spain (Barcelona)
+    { country:"Spain", city:"Barcelona", name:"De La Creme", position:{lat:41.3907,lng:2.1594}, description:"Great gelato & friendly staff.", address:"Carrer d'Enric Granados, 15, 08007 Barcelona, Spain" },
+    // Guatemala (Antigua)
+    { country:"Guatemala", city:"Antigua", name:"Hotel Casa Doña Antonia", position:{lat:14.5560,lng:-90.7336}, description:"Gorgeous hotel – breakfast amazing, staff so welcoming.", address:"1A Calle Oriente 9A, Casa 9, Alameda Santa Rosa, Antigua, Guatemala" },
+    // Guatemala (Guatemala City)
+    { country:"Guatemala", city:"Guatemala City", name:"12 ONZAS", position:{lat:14.6039,lng:-90.4880}, description:"Great coffee & matcha, beautiful space to relax.", address:"Calle 3-57 13, Zona 10, Guatemala City, 01010", link:"https://12onzas.com" },
+    { country:"Guatemala", city:"Guatemala City", name:"Smart Training Gym", position:{lat:14.6357,lng:-90.5132}, description:"Great vibes – grab a smoothie at the desk!", address:"5 Av. 8-40 Zona 1, Guatemala City, Guatemala" },
+    // Guatemala (Panajachel)
+    { country:"Guatemala", city:"Panajachel", name:"Nativo Café", position:{lat:14.7419,lng:-91.1569}, description:"Great coffee, breakfast amazing, friendly staff.", address:"Calle Del Frutal, Panajachel 07010" },
+    { country:"Guatemala", city:"Panajachel", name:"The Little Spoon", position:{lat:14.7424,lng:-91.1571}, description:"Great breakfast, affordable, welcoming staff.", address:"Calle Santander, Panajachel 07010" }
+  ];
 
-    #sidebar h2 {
-      margin-top: 0;
-      color: #ff3399;
-    }
-    .controls {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-bottom: 15px;
-    }
-    #search-bar {
-      width: 100%;
-      padding: 8px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      box-sizing: border-box;
-    }
-    #reset-view {
-      width: 100%;
-      padding: 8px;
-      border: none;
-      background-color: #ff66b2;
-      color: white;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    details {
-      margin-bottom: 10px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      background: white;
-      padding: 5px;
-    }
-    summary {
-      font-weight: bold;
-      cursor: pointer;
-    }
-    ul {
-      list-style: none;
-      padding: 0;
-      margin: 10px 0 0 10px;
-    }
-    li {
-      margin-bottom: 8px;
-      cursor: pointer;
-      padding: 6px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      background: #fafafa;
-      transition: background 0.3s;
-    }
-    li:hover {
-      background: #f0f0f0;
-    }
-
-    /* Toggle Button */
-    #sidebar-toggle {
-      position: fixed;
-      top: 120px;
-      left: 0;
-      z-index: 1300;
-      background: #ff85c1;
-      color: white;
-      border: none;
-      padding: 5px 10px;
-      cursor: pointer;
-      border-radius: 0 5px 5px 0;
-    }
-
-    footer {
-      background-color: #ff66b2;
-      color: white;
-      text-align: center;
-      padding: 8px;
-      position: fixed;
-      bottom: 0;
-      width: 100%;
-      font-size: 0.9em;
-      z-index: 1200;
-    }
-
-    @media screen and (max-width: 768px) {
-      #sidebar {
-        width: 240px;
-      }
-      #map {
-        margin-left: 240px;
-      }
-    }
-  </style>
-  <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY_HERE"></script>
-  <script>
-    let map;
-    let markers = [];
-    const places = [
-      // Ireland 🇮🇪
-      { country:"🇮🇪 Ireland", city:"Dublin", name:"Nine Crows Vintage", position:{lat:53.3437,lng:-6.2646}, description:"Curated Y2K vintage – diverse staff, fun vibe.", address:"22 Temple Lane S, Dublin 2, D02 HP52, Ireland" },
-      { country:"🇮🇪 Ireland", city:"Dublin", name:"Lou's Lot (George's Street Arcade)", position:{lat:53.3425,lng:-6.2634}, description:"Luxury vintage inside the arcade.", address:"South Great George's Street, Dublin 2, Ireland" },
-      { country:"🇮🇪 Ireland", city:"Dublin", name:"Copper and Straw", position:{lat:53.3461,lng:-6.2638}, description:"Great coffee & friendly staff.", address:"Aston Quay, Temple Bar, Dublin, D02 FV38, Ireland" },
-
-      // Spain 🇪🇸
-      { country:"🇪🇸 Spain", city:"Madrid", name:"Amazing Coffee", position:{lat:40.4112,lng:-3.7035}, description:"Great vibe, Colombian owner – hot spot.", address:"C. de San Millán, 4, Centro, 28012 Madrid, Spain" },
-      { country:"🇪🇸 Spain", city:"Barcelona", name:"De La Creme", position:{lat:41.3907,lng:2.1594}, description:"Great gelato & friendly staff.", address:"Carrer d'Enric Granados, 15, 08007 Barcelona, Spain" },
-
-      // Guatemala 🇬🇹
-      { country:"🇬🇹 Guatemala", city:"Antigua", name:"Hotel Casa Doña Antonia", position:{lat:14.5560,lng:-90.7336}, description:"Gorgeous hotel – breakfast amazing, staff so welcoming.", address:"1A Calle Oriente 9A, Casa 9, Alameda Santa Rosa, Antigua, Guatemala" },
-      { country:"🇬🇹 Guatemala", city:"Guatemala City", name:"12 ONZAS", position:{lat:14.6039,lng:-90.4880}, description:"Great coffee & matcha, beautiful space to relax.", address:"Calle 3-57 13, Zona 10, Guatemala City, 01010", link:"https://12onzas.com" }
-    ];
-
-    function addMarkersToMap(filteredPlaces) {
-      markers.forEach(marker => marker.setMap(null));
-      markers = [];
-      filteredPlaces.forEach(place => {
-        const marker = new google.maps.Marker({
-          position: place.position,
-          map: map,
-          title: place.name,
-          animation: google.maps.Animation.DROP
-        });
-        const infoContent = `<h3>${place.name}</h3>
-                             <p>${place.description}</p>
-                             <p><em>${place.address}</em></p>
-                             ${place.link ? `<p><a href="${place.link}" target="_blank">Website</a></p>` : ''}`;
-        const infoWindow = new google.maps.InfoWindow({content: infoContent});
-        marker.addListener("click", () => infoWindow.open(map, marker));
-        markers.push(marker);
+  function addMarkersToMap(filteredPlaces){
+    markers.forEach(m=>m.setMap(null));
+    markers=[];
+    filteredPlaces.forEach(place=>{
+      const marker = new google.maps.Marker({
+        position: place.position,
+        map: map,
+        title: place.name,
+        animation: google.maps.Animation.DROP
       });
-    }
-
-    function renderPlaces(filteredPlaces) {
-      const list = document.getElementById("place-list");
-      list.innerHTML = '';
-      const grouped = {};
-      filteredPlaces.forEach(place => {
-        if(!grouped[place.country]) grouped[place.country]={};
-        if(!grouped[place.country][place.city]) grouped[place.country][place.city]=[];
-        grouped[place.country][place.city].push(place);
+      const infoWindow = new google.maps.InfoWindow({
+        content: `<h3>${place.name}</h3><p>${place.description}</p><p><em>${place.address}</em></p>${place.link?`<p><a href="${place.link}" target="_blank">Website</a></p>`:""}`
       });
+      marker.addListener("click", ()=>{ infoWindow.open(map, marker); });
+      markers.push(marker);
+    });
+  }
 
-      Object.keys(grouped).forEach(country=>{
-        const countryDetails=document.createElement("details");
-        const countrySummary=document.createElement("summary");
-        countrySummary.textContent=country;
-        countryDetails.appendChild(countrySummary);
+  function renderPlaces(filteredPlaces){
+    const list=document.getElementById("place-list");
+    list.innerHTML='';
+    const grouped={};
+    filteredPlaces.forEach(place=>{
+      if(!grouped[place.country]) grouped[place.country]={};
+      if(!grouped[place.country][place.city]) grouped[place.country][place.city]=[];
+      grouped[place.country][place.city].push(place);
+    });
 
-        Object.keys(grouped[country]).forEach(city=>{
-          const cityDetails=document.createElement("details");
-          const citySummary=document.createElement("summary");
-          citySummary.textContent=city;
-          cityDetails.appendChild(citySummary);
-          const ul=document.createElement("ul");
-          grouped[country][city].forEach(place=>{
-            const li=document.createElement("li");
-            li.innerHTML=`<strong>${place.name}</strong><br><small>${place.description}</small>`;
-            li.addEventListener("click",()=>{
-              map.setCenter(place.position);
-              map.setZoom(15);
-              const marker=markers.find(m=>m.title===place.name);
-              if(marker){
-                new google.maps.InfoWindow({
-                  content:`<h3>${place.name}</h3><p>${place.description}</p><p><em>${place.address}</em></p>`
-                }).open(map, marker);
-              }
-            });
-            ul.appendChild(li);
+    Object.keys(grouped).forEach(country=>{
+      const countryDetails=document.createElement("details");
+      const countrySummary=document.createElement("summary");
+      countrySummary.textContent=country;
+      countryDetails.appendChild(countrySummary);
+
+      Object.keys(grouped[country]).forEach(city=>{
+        const cityDetails=document.createElement("details");
+        const citySummary=document.createElement("summary");
+        citySummary.textContent=city;
+        cityDetails.appendChild(citySummary);
+
+        const ul=document.createElement("ul");
+        grouped[country][city].forEach(place=>{
+          const li=document.createElement("li");
+          li.innerHTML=`<strong>${place.name}</strong><br><small>${place.description}</small>`;
+          li.addEventListener("click", ()=>{
+            map.setCenter(place.position);
+            map.setZoom(15);
+            const marker=markers.find(m=>m.title===place.name);
+            if(marker){
+              new google.maps.InfoWindow({
+                content:`<h3>${place.name}</h3><p>${place.description}</p><p><em>${place.address}</em></p>${place.link?`<p><a href="${place.link}" target="_blank">Website</a></p>`:""}`
+              }).open(map, marker);
+            }
           });
-          cityDetails.appendChild(ul);
-          countryDetails.appendChild(cityDetails);
+          ul.appendChild(li);
         });
-        list.appendChild(countryDetails);
+
+        cityDetails.appendChild(ul);
+        countryDetails.appendChild(cityDetails);
       });
-    }
+      list.appendChild(countryDetails);
+    });
+  }
 
-    function filterPlaces() {
-      const searchTerm=document.getElementById("search-bar").value.toLowerCase();
-      const filtered=places.filter(p=>p.name.toLowerCase().includes(searchTerm)||
-                                        p.description.toLowerCase().includes(searchTerm)||
-                                        p.address.toLowerCase().includes(searchTerm));
-      renderPlaces(filtered);
-      addMarkersToMap(filtered);
-    }
+  function filterPlaces(){
+    const term=document.getElementById("search-bar").value.toLowerCase();
+    const filtered=places.filter(p=>p.name.toLowerCase().includes(term) || p.description.toLowerCase().includes(term) || p.address.toLowerCase().includes(term));
+    renderPlaces(filtered);
+    addMarkersToMap(filtered);
+  }
 
-    function resetView(){
-      document.getElementById("search-bar").value="";
-      map.setZoom(3);
-      map.setCenter({lat:20,lng:-20});
-      filterPlaces();
-    }
+  function resetView(){
+    document.getElementById("search-bar").value="";
+    map.setZoom(3);
+    map.setCenter({lat:20,lng:-20});
+    filterPlaces();
+  }
 
-    function initMap(){
-      map=new google.maps.Map(document.getElementById("map"),{
-        zoom:3,
-        center:{lat:20,lng:-20}
-      });
-      addMarkersToMap(places);
-      renderPlaces(places);
-      document.getElementById("search-bar").addEventListener("keyup",filterPlaces);
-      document.getElementById("reset-view").addEventListener("click",resetView);
-    }
+  function initMap(){
+    map=new google.maps.Map(document.getElementById("map"), { zoom:3, center:{lat:20,lng:-20} });
+    addMarkersToMap(places);
+    renderPlaces(places);
+    document.getElementById("search-bar").addEventListener("keyup", filterPlaces);
+    document.getElementById("reset-view").addEventListener("click", resetView);
+  }
 
-    // Sidebar toggle
-    function toggleSidebar(){
-      document.getElementById('sidebar').classList.toggle('closed');
-      document.getElementById('map').classList.toggle('full');
-    }
-  </script>
+  function toggleSidebar(){
+    document.getElementById("sidebar").classList.toggle("active");
+  }
+
+</script>
 </head>
 <body onload="initMap()">
-  <header>
-    <h1>Zoe's Atlas 🐞</h1>
-    <p>Curated, Black-friendly spots around the globe 🌎.<br>Click a place to zoom in & see details. Use the search bar to find a location!</p>
-  </header>
-  <button id="sidebar-toggle" onclick="toggleSidebar()">⏩</button>
+  <button id="hamburger" onclick="toggleSidebar()">☰</button>
   <div id="sidebar">
+    <h1>Zoe's Atlas 🐞</h1>
+    <p>Welcome! This is a curated map of Black-friendly and safe spaces globally. Click any location to zoom in and view details. Use the search bar to filter places quickly. 🌍✨</p>
     <div class="controls">
       <input type="text" id="search-bar" placeholder="Search places..." aria-label="Search places">
       <button id="reset-view">View All Locations</button>
     </div>
-    <h2>Places</h2>
     <div id="place-list"></div>
+    <footer>
+      <p>Curated with ❤️ by Zoe</p>
+    </footer>
   </div>
   <div id="map"></div>
-  <footer>
-    <p>Curated with ❤️ by Zoe</p>
-  </footer>
 </body>
 </html>
+
+
