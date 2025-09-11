@@ -1,40 +1,32 @@
-# The Zoe Atlas
+# Zoe Atlas 🌍  
 
-**Interactive map of Black-friendly, culturally rich, and locally loved destinations worldwide.**
+An interactive travel atlas inspired by the idea of a modern “Green Book.”  
+This project highlights destinations I’ve visited — organized by country and city — with clickable markers, dropdown navigation, and popups containing details about each location.  
 
-Welcome to **The Zoe Atlas**—your guide to discovering hidden gems, supporting communities, and exploring culturally rich spots across the globe. Each location is curated with care and categorized for easy exploration:  
+## 🚀 Live Demo  
+Check it out here: [Zoe Atlas on GitHub Pages](https://culturalcompass.github.io/zoe-atlas/)  
+Or visit directly: https://culturalcompass.github.io/zoe-atlas/  
 
-- **Food & Drink** 🍴  
-- **Shopping & Vintage** 🛍️  
-- **Culture & History** 🎨  
+## ✨ Features  
+- Dropdown navigation by country & city  
+- Clickable markers with info popups  
+- Organized and expandable structure for future locations  
+- Responsive design for desktop and mobile  
 
-Click on any location in the list to zoom in on the map and explore the details.
+## 🛠️ Tech Stack  
+- **HTML** – structure  
+- **CSS** – styling  
+- **JavaScript** – interactivity  
+- **Google Maps API** – map & location services  
 
----
+## 📌 Future Improvements  
+- Add continent-level filtering for larger organization  
+- Include more locations (Spain, Dublin, Colombia, etc.)  
+- Improve styling for accessibility and mobile experience  
+- Integrate user contributions or ratings  
 
-## Live Demo
-Check out the live interactive map here: [Zoe Atlas Live](https://yourusername.github.io/zoe-atlas/)
-
----
-
-## Features
-- Interactive Google Map with clickable markers  
-- Locations grouped by city and category  
-- Color-coded markers for easy navigation  
-- Responsive layout for desktop and mobile  
-- Footer and branding colors matching the Zoe Atlas theme  
-
----
-
-## Technologies Used
-- HTML5  
-- CSS3  
-- JavaScript  
-- Google Maps API  
-
----
-
-## How to Use / Contribute
-1. Clone this repository:  
+## 🧑‍💻 How to Run Locally  
+1. Clone this repository  
    ```bash
-   git clone https://github.com/cultural-compass/zoe-atlas.git
+   git clone https://github.com/culturalcompass/zoe-atlas.git
+
