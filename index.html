@@ -77,188 +77,229 @@
         center: { lat: 40.0, lng: -3.7 } // Rough center between Spain & Ireland
       });
 
-      const places = [
-        // Dublin
-        {
-          country: "Ireland",
-          city: "Dublin",
-          name: "Nine Crows Vintage",
-          position: { lat: 53.3437, lng: -6.2646 },
-          description: "Curated Y2K vintage – diverse staff, fun vibe.",
-          address: "22 Temple Lane S, Dublin 2, D02 HP52, Ireland"
-        },
-        {
-          country: "Ireland",
-          city: "Dublin",
-          name: "Lou's Lot (George's Street Arcade)",
-          position: { lat: 53.3425, lng: -6.2634 },
-          description: "Luxury vintage inside the arcade.",
-          address: "South Great George's Street, Dublin 2, Ireland"
-        },
-        {
-          country: "Ireland",
-          city: "Dublin",
-          name: "Copper and Straw",
-          position: { lat: 53.3461, lng: -6.2638 },
-          description: "Great coffee & friendly staff.",
-          address: "Aston Quay, Temple Bar, Dublin, D02 FV38, Ireland"
-        },
-        {
-          country: "Ireland",
-          city: "Dublin",
-          name: "George's Arcade",
-          position: { lat: 53.3430, lng: -6.2635 },
-          description: "Open-air market full of character.",
-          address: "South Great George's Street, Dublin 2, Ireland"
-        },
-        {
-          country: "Ireland",
-          city: "Dublin",
-          name: "Bambino's",
-          position: { lat: 53.3395, lng: -6.2651 },
-          description: "Cozy pizza spot, local favorite.",
-          address: "37 Stephen Street Lower, Dublin 2, D02 T862, Ireland"
-        },
-        {
-          country: "Ireland",
-          city: "Dublin",
-          name: "The Big Smoke Vintage Clothing",
-          position: { lat: 53.3452, lng: -6.2639 },
-          description: "Vintage treasures by Merchant’s Arch.",
-          address: "Merchant's Arch, Dublin 2, D02 WP27, Ireland"
-        },
-        // Madrid
-        {
-          country: "Spain",
-          city: "Madrid",
-          name: "Amazing Coffee (Colombian owner)",
-          position: { lat: 40.4112, lng: -3.7035 },
-          description: "Great vibe, Colombian owner – hot spot.",
-          address: "C. de San Millán, 4, Centro, 28012 Madrid, Spain"
-        },
-        {
-          country: "Spain",
-          city: "Madrid",
-          name: "Hot Now Pizza",
-          position: { lat: 40.4235, lng: -3.6994 },
-          description: "Great pizza spot.",
-          address: "C. de Barbieri, 14, Centro, 28004 Madrid, Spain"
-        },
-        {
-          country: "Spain",
-          city: "Madrid",
-          name: "Han So Café",
-          position: { lat: 40.4240, lng: -3.7060 },
-          description: "Trendy coffee + café spot in Malasaña.",
-          address: "Calle Pez 20, Barrio Malasaña, 28004, Madrid"
-        },
-        {
-          country: "Spain",
-          city: "Madrid",
-          name: "San Miguel Market",
-          position: { lat: 40.4154, lng: -3.7094 },
-          description: "Big, bustling market – must visit.",
-          address: "Plaza de San Miguel, 28005 Madrid, Spain"
-        },
-        {
-          country: "Spain",
-          city: "Madrid",
-          name: "Honest Greens",
-          position: { lat: 40.4512, lng: -3.6889 },
-          description: "Cheap & healthy food – any location works.",
-          address: "Paseo de la Castellana, 89, 28046, Madrid"
-        },
-        {
-          country: "Spain",
-          city: "Madrid",
-          name: "Humana (Thrift Store)",
-          position: { lat: 40.4236, lng: -3.6717 },
-          description: "Great deals, some items from €2, discounts on certain days.",
-          address: "Calle de Alcalá, 171, 28009, Madrid"
-        },
-        {
-          country: "Spain",
-          city: "Madrid",
-          name: "By Pillow Hostel",
-          position: { lat: 40.4107, lng: -3.7026 },
-          description: "Great location, friendly staff.",
-          address: "Calle de Jesús y María, 12, 28012, Madrid"
-        },
-        {
-          country: "Spain",
-          city: "Madrid",
-          name: "Ambu Nuñez Café",
-          position: { lat: 40.4292, lng: -3.6831 },
-          description: "Excellent coffee – cold brew is amazing. Two locations.",
-          address: "Calle Nuñez de Balboa 28, 28001 Madrid, Spain"
-        },
-        {
-          country: "Spain",
-          city: "Madrid",
-          name: "Alma Nomad Bakery",
-          position: { lat: 40.4368, lng: -3.7009 },
-          description: "Great bakery – two locations, plus pizza shop nearby.",
-          address: "C/ Sta. Feliciana 10, 28010 Madrid, Spain"
-        },
-        {
-          country: "Spain",
-          city: "Madrid",
-          name: "Alma Nomad Pizza",
-          position: { lat: 40.4365, lng: -3.7015 },
-          description: "Delicious pizza by Alma Nomad Bakery.",
-          address: "C. de Sta. Feliciana, 4, 28010 Madrid, Spain"
-        },
-        // Barcelona
-        {
-          country: "Spain",
-          city: "Barcelona",
-          name: "De La Creme",
-          position: { lat: 41.3907, lng: 2.1594 },
-          description: "Great gelato & friendly staff.",
-          address: "Carrer d'Enric Granados, 15, 08007 Barcelona, Spain"
-        },
-        {
-          country: "Spain",
-          city: "Barcelona",
-          name: "Honest Greens",
-          position: { lat: 41.3888, lng: 2.1590 },
-          description: "Healthy, delicious food at good prices.",
-          address: "Various locations, Barcelona, Spain"
-        },
-        {
-          country: "Spain",
-          city: "Barcelona",
-          name: "Hotel Market",
-          position: { lat: 41.3787, lng: 2.1598 },
-          description: "Excellent location, great staff & accommodations.",
-          address: "Carrer del Comte Borrell, 68, 08015 Barcelona, Spain"
-        },
-        {
-          country: "Spain",
-          city: "Barcelona",
-          name: "Papa Dâm",
-          position: { lat: 41.3779, lng: 2.1623 },
-          description: "Delicious food – try the garlic rice!",
-          address: "Rda. de Sant Pau, 11, 08015 Barcelona, Spain"
-        },
-        {
-          country: "Spain",
-          city: "Barcelona",
-          name: "Origo",
-          position: { lat: 41.3778, lng: 2.1638 },
-          description: "Amazing staff, cardamom bun + coffee spot.",
-          address: "Rda. de Sant Pau, 67, 08015 Barcelona, Spain"
-        }
-      ];
+      vconst places = [
+  // Dublin
+  {
+    country: "Ireland",
+    city: "Dublin",
+    name: "Nine Crows Vintage",
+    position: { lat: 53.3437, lng: -6.2646 },
+    description: "Curated Y2K vintage – diverse staff, fun vibe.",
+    address: "22 Temple Lane S, Dublin 2, D02 HP52, Ireland"
+  },
+  {
+    country: "Ireland",
+    city: "Dublin",
+    name: "Lou's Lot (George's Street Arcade)",
+    position: { lat: 53.3425, lng: -6.2634 },
+    description: "Luxury vintage inside the arcade.",
+    address: "South Great George's Street, Dublin 2, Ireland"
+  },
+  {
+    country: "Ireland",
+    city: "Dublin",
+    name: "Copper and Straw",
+    position: { lat: 53.3461, lng: -6.2638 },
+    description: "Great coffee & friendly staff.",
+    address: "Aston Quay, Temple Bar, Dublin, D02 FV38, Ireland"
+  },
+  {
+    country: "Ireland",
+    city: "Dublin",
+    name: "George's Arcade",
+    position: { lat: 53.3430, lng: -6.2635 },
+    description: "Open-air market full of character.",
+    address: "South Great George's Street, Dublin 2, Ireland"
+  },
+  {
+    country: "Ireland",
+    city: "Dublin",
+    name: "Bambino's",
+    position: { lat: 53.3395, lng: -6.2651 },
+    description: "Cozy pizza spot, local favorite.",
+    address: "37 Stephen Street Lower, Dublin 2, D02 T862, Ireland"
+  },
+  {
+    country: "Ireland",
+    city: "Dublin",
+    name: "The Big Smoke Vintage Clothing",
+    position: { lat: 53.3452, lng: -6.2639 },
+    description: "Vintage treasures by Merchant’s Arch.",
+    address: "Merchant's Arch, Dublin 2, D02 WP27, Ireland"
+  },
 
-      const list = document.getElementById("place-list");
+  // Madrid
+  {
+    country: "Spain",
+    city: "Madrid",
+    name: "Amazing Coffee (Colombian owner)",
+    position: { lat: 40.4112, lng: -3.7035 },
+    description: "Great vibe, Colombian owner – hot spot.",
+    address: "C. de San Millán, 4, Centro, 28012 Madrid, Spain"
+  },
+  {
+    country: "Spain",
+    city: "Madrid",
+    name: "Hot Now Pizza",
+    position: { lat: 40.4235, lng: -3.6994 },
+    description: "Great pizza spot.",
+    address: "C. de Barbieri, 14, Centro, 28004 Madrid, Spain"
+  },
+  {
+    country: "Spain",
+    city: "Madrid",
+    name: "Han So Café",
+    position: { lat: 40.4240, lng: -3.7060 },
+    description: "Trendy coffee + café spot in Malasaña.",
+    address: "Calle Pez 20, Barrio Malasaña, 28004, Madrid"
+  },
+  {
+    country: "Spain",
+    city: "Madrid",
+    name: "San Miguel Market",
+    position: { lat: 40.4154, lng: -3.7094 },
+    description: "Big, bustling market – must visit.",
+    address: "Plaza de San Miguel, 28005 Madrid, Spain"
+  },
+  {
+    country: "Spain",
+    city: "Madrid",
+    name: "Honest Greens",
+    position: { lat: 40.4512, lng: -3.6889 },
+    description: "Cheap & healthy food – any location works.",
+    address: "Paseo de la Castellana, 89, 28046, Madrid"
+  },
+  {
+    country: "Spain",
+    city: "Madrid",
+    name: "Humana (Thrift Store)",
+    position: { lat: 40.4236, lng: -3.6717 },
+    description: "Great deals, some items from €2, discounts on certain days.",
+    address: "Calle de Alcalá, 171, 28009, Madrid"
+  },
+  {
+    country: "Spain",
+    city: "Madrid",
+    name: "By Pillow Hostel",
+    position: { lat: 40.4107, lng: -3.7026 },
+    description: "Great location, friendly staff.",
+    address: "Calle de Jesús y María, 12, 28012, Madrid"
+  },
+  {
+    country: "Spain",
+    city: "Madrid",
+    name: "Ambu Nuñez Café",
+    position: { lat: 40.4292, lng: -3.6831 },
+    description: "Excellent coffee – cold brew is amazing. Two locations.",
+    address: "Calle Nuñez de Balboa 28, 28001 Madrid, Spain"
+  },
+  {
+    country: "Spain",
+    city: "Madrid",
+    name: "Alma Nomad Bakery",
+    position: { lat: 40.4368, lng: -3.7009 },
+    description: "Great bakery – two locations, plus pizza shop nearby.",
+    address: "C/ Sta. Feliciana 10, 28010 Madrid, Spain"
+  },
+  {
+    country: "Spain",
+    city: "Madrid",
+    name: "Alma Nomad Pizza",
+    position: { lat: 40.4365, lng: -3.7015 },
+    description: "Delicious pizza by Alma Nomad Bakery.",
+    address: "C. de Sta. Feliciana, 4, 28010 Madrid, Spain"
+  },
 
-      const grouped = {};
-      places.forEach(place => {
-        if (!grouped[place.country]) grouped[place.country] = {};
-        if (!grouped[place.country][place.city]) grouped[place.country][place.city] = [];
-        grouped[place.country][place.city].push(place);
-      });
+  // Barcelona
+  {
+    country: "Spain",
+    city: "Barcelona",
+    name: "De La Creme",
+    position: { lat: 41.3907, lng: 2.1594 },
+    description: "Great gelato & friendly staff.",
+    address: "Carrer d'Enric Granados, 15, 08007 Barcelona, Spain"
+  },
+  {
+    country: "Spain",
+    city: "Barcelona",
+    name: "Honest Greens",
+    position: { lat: 41.3888, lng: 2.1590 },
+    description: "Healthy, delicious food at good prices.",
+    address: "Various locations, Barcelona, Spain"
+  },
+  {
+    country: "Spain",
+    city: "Barcelona",
+    name: "Hotel Market",
+    position: { lat: 41.3787, lng: 2.1598 },
+    description: "Excellent location, great staff & accommodations.",
+    address: "Carrer del Comte Borrell, 68, 08015 Barcelona, Spain"
+  },
+  {
+    country: "Spain",
+    city: "Barcelona",
+    name: "Papa Dâm",
+    position: { lat: 41.3779, lng: 2.1623 },
+    description: "Delicious food – try the garlic rice!",
+    address: "Rda. de Sant Pau, 11, 08015 Barcelona, Spain"
+  },
+  {
+    country: "Spain",
+    city: "Barcelona",
+    name: "Origo",
+    position: { lat: 41.3778, lng: 2.1638 },
+    description: "Amazing staff, cardamom bun + coffee spot.",
+    address: "Rda. de Sant Pau, 67, 08015 Barcelona, Spain"
+  },
+
+  // Guatemala
+  {
+    country: "Guatemala",
+    city: "Antigua",
+    name: "Hotel Casa Donya Antigua",
+    position: { lat: 14.5592, lng: -90.7355 },
+    description: "Gorgeous hotel – breakfast was amazing, staff amazing, great location.",
+    address: "1A Calle Oriente 9A, Casa 9, Alameda Santa Rosa, Antigua, Guatemala"
+  },
+  {
+    country: "Guatemala",
+    city: "Antigua",
+    name: "Casa Donya Hotel Antigua",
+    position: { lat: 14.5605, lng: -90.7345 },
+    description: "Beautiful venue – pizza was phenomenal, staff was welcoming.",
+    address: "3a Calle Oriente 16a, Antigua Guatemala, Guatemala, Sacatepéquez"
+  },
+  {
+    country: "Guatemala",
+    city: "Antigua",
+    name: "La Tasca",
+    position: { lat: 14.5513, lng: -90.7421 },
+    description: "Great vibes – get the shrimp tostadas.",
+    address: "2 Avenida, Magdalena Milpas Altas, Sacatepéquez"
+  },
+  {
+    country: "Guatemala",
+    city: "Guatemala City",
+    name: "12 ONZAS",
+    position: { lat: 14.6246, lng: -90.5246 },
+    description: "Great coffee, matcha, beautiful space to relax and recharge.",
+    address: "Calle 3-57 13, Zona 10, Guatemala City, 01010"
+  },
+  {
+    country: "Guatemala",
+    city: "Guatemala City",
+    name: "Oakland Mall",
+    position: { lat: 14.6209, lng: -90.5258 },
+   
+      
+            const list = document.getElementById("place-list");
+      
+            const grouped = {};
+            places.forEach(place => {
+              if (!grouped[place.country]) grouped[place.country] = {};
+              if (!grouped[place.country][place.city]) grouped[place.country][place.city] = [];
+              grouped[place.country][place.city].push(place);
+            });
 
       Object.keys(grouped).forEach(country => {
         const countryDetails = document.createElement("details");
@@ -324,4 +365,5 @@
   </footer>
 </body>
 </html>
+
 
