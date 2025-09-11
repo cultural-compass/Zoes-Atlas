@@ -61,6 +61,20 @@
       flex-grow: 1;
       min-width: 120px;
     }
+    .controls button {
+        padding: 7px;
+        border: 1px solid #d9b2c2;
+        background-color: #d9b2c2;
+        color: white;
+        font-weight: bold;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        flex-grow: 1;
+    }
+    .controls button:hover {
+        background-color: #c49eb0;
+    }
     .places-list h2 {
       margin-top: 0;
       color: #7d3c93; /* A professional shade of purple from your brand colors */
@@ -101,6 +115,10 @@
     }
     li:hover {
       background: #f0f0f0;
+    }
+    .active-item {
+        background-color: #d9b2c2; /* Soft pink background for active item */
+        font-weight: bold;
     }
     footer {
       background-color: #ff66b2;
@@ -536,6 +554,14 @@
       const li = document.createElement("li");
       li.innerHTML = `<strong>${categoryEmoji[place.category] || ""} ${place.name}</strong><br><small>${place.description}</small>`;
       li.addEventListener("click", () => {
+        // Remove active class from all other list items
+        document.querySelectorAll('#place-list li').forEach(item => {
+          item.classList.remove('active-item');
+        });
+        
+        // Add active class to the clicked item
+        li.classList.add('active-item');
+
         map.setCenter(place.position);
         map.setZoom(15);
         const marker = markers.find(m => m.title === place.name);
@@ -619,6 +645,15 @@
         markers.push(marker);
       });
     }
+    
+    // New function to reset the map view
+    function resetMapToGlobalView() {
+        map.setZoom(2);
+        map.setCenter({ lat: 20, lng: -10 });
+        document.getElementById("search-bar").value = '';
+        document.getElementById("category-filter").value = 'all';
+        filterPlaces();
+    }
 
     function filterPlaces() {
       const searchTerm = document.getElementById("search-bar").value.toLowerCase();
@@ -638,7 +673,7 @@
 
     function initMap() {
       map = new google.maps.Map(document.getElementById("map"), {
-        zoom: 5,
+        zoom: 2, /* Adjusted to a low number for a full zoom out */
         center: { lat: 20, lng: -10 }
       });
 
@@ -648,6 +683,9 @@
       // Add event listeners for search and filter
       document.getElementById("search-bar").addEventListener("keyup", filterPlaces);
       document.getElementById("category-filter").addEventListener("change", filterPlaces);
+      
+      // New event listener for the reset button
+      document.getElementById("reset-view").addEventListener("click", resetMapToGlobalView);
     }
   </script>
 </head>
@@ -655,6 +693,7 @@
   <header>
     <h1>Zoe Atlas 🐞</h1>
     <p>Curated, Black-friendly, and welcoming spots across the globe</p>
+    <p class="instructions">Click on a place in the list to jump to its location on the map, or click a pin directly to see more info!</p>
   </header>
   <div class="main-container">
     <div id="sidebar">
@@ -668,6 +707,7 @@
           <option value="shop">Shops 🛍️</option>
           <option value="gym">Gyms 💪</option>
         </select>
+        <button id="reset-view">View All Locations</button>
       </div>
       <div class="places-list">
         <h2>Places</h2>
