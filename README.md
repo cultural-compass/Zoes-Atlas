@@ -3,9 +3,9 @@
 An interactive travel atlas inspired by the idea of a modern “Green Book.”  
 This project highlights destinations I’ve visited — organized by country and city — with clickable markers, dropdown navigation, and popups containing details about each location.  
 
-## 🚀 Live Demo  
-Check it out here: [Zoes-Atlas on GitHub Pages](https://culturalcompass.github.io/zoe-atlas/)  
-Or visit directly: https://cultural-compass.github.io/Zoes-Atlas/  
+## 🚀 Live Demo
+Check it out here: [Zoes-Atlas on GitHub Pages](https://cultural-compass.github.io/Zoes-Atlas/)  
+Or visit directly: https://cultural-compass.github.io/Zoes-Atlas/
 
 ## ✨ Features  
 - Dropdown navigation by country & city  
@@ -28,5 +28,4 @@ Or visit directly: https://cultural-compass.github.io/Zoes-Atlas/
 ## 🧑‍💻 How to Run Locally  
 1. Clone this repository  
    ```bash
-   git clone https://github.com/culturalcompass/zoe-atlas.git
-
+   git clone https://github.com/cultural-compass/Zoes-Atlas.git
