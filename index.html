@@ -2,117 +2,154 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Zoe Atlas 🐞</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #ffe6f0;
-      color: #333;
-      margin: 0;
-      padding: 0;
-    }
-    header {
-      background-color: #ff66b2;
-      color: white;
-      text-align: center;
-      padding: 20px;
-    }
-    header p {
-      margin: 5px 0;
-    }
-    #map {
-      height: 500px;
-      width: 100%;
-    }
-    .places {
-      background-color: #e6ffe6;
-      padding: 20px;
-    }
-    .places h2 {
-      margin-top: 0;
-      color: #ff3399;
-    }
-    details {
-      margin-bottom: 10px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      background: white;
-      padding: 10px;
-    }
-    summary {
-      font-weight: bold;
-      font-size: 1.2em;
-      cursor: pointer;
-      color: #222;
-    }
-    ul {
-      list-style: none;
-      padding: 0;
-      margin: 10px 0 0 15px;
-    }
-    li {
-      margin-bottom: 10px;
-      cursor: pointer;
-      padding: 8px;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-      background: #fafafa;
-      transition: background 0.3s;
-    }
-    li:hover {
-      background: #f0f0f0;
-    }
-    footer {
-      background-color: #ff66b2;
-      color: white;
-      text-align: center;
-      padding: 10px;
-      margin-top: 20px;
-    }
-    img.pin-photo {
-      width: 100px;
-      margin: 2px;
-      border-radius: 5px;
-    }
+    /* Add your CSS styles here */
   </style>
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB38rOcYSnjrdPynqMR6i0vpP8ZYi1Z2W4"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap" async defer></script>
   <script>
     let map;
-
-    const places = [
-      // Dublin
-      { country: "Ireland", city: "Dublin", name: "Nine Crows Vintage", category: "shop", position: { lat: 53.3437, lng: -6.2646 }, description: "Curated Y2K vintage – diverse staff, fun vibe.", address: "22 Temple Lane S, Dublin 2, D02 HP52, Ireland", photos: [], tip: "Try browsing on weekdays to avoid crowds." },
-      { country: "Ireland", city: "Dublin", name: "Lou's Lot (George's Street Arcade)", category: "shop", position: { lat: 53.3425, lng: -6.2634 }, description: "Luxury vintage inside the arcade.", address: "South Great George's Street, Dublin 2, Ireland", photos: [], tip: "Check for seasonal sales!" },
-      { country: "Ireland", city: "Dublin", name: "Copper and Straw", category: "coffee", position: { lat: 53.3461, lng: -6.2638 }, description: "Great coffee & friendly staff.", address: "Aston Quay, Temple Bar, Dublin, D02 FV38, Ireland", photos: [], tip: "Try their signature latte." },
-
-      // Madrid
-      { country: "Spain", city: "Madrid", name: "Amazing Coffee (Colombian owner)", category: "coffee", position: { lat: 40.4112, lng: -3.7035 }, description: "Great vibe, Colombian owner – hot spot.", address: "C. de San Millán, 4, Centro, 28012 Madrid, Spain", photos: [], tip: "Go early for a quiet experience." },
-
-      // Barcelona
-      { country: "Spain", city: "Barcelona", name: "De La Creme", category: "coffee", position: { lat: 41.3907, lng: 2.1594 }, description: "Great gelato & friendly staff.", address: "Carrer d'Enric Granados, 15, 08007 Barcelona, Spain", photos: [], tip: "Perfect spot for an afternoon treat." },
-
-      // Guatemala
-      { country: "Guatemala", city: "Antigua", name: "Hotel Casa Donya Antigua", category: "hotel", position: { lat: 14.5592, lng: -90.7355 }, description: "Gorgeous hotel – breakfast amazing, staff amazing, great location.", address: "1A Calle Oriente 9A, Casa 9, Alameda Santa Rosa, Antigua, Guatemala", photos: [], tip: "Ask for a room with a balcony." },
-      { country: "Guatemala", city: "Panajachel", name: "Nativo Café", category: "coffee", position: { lat: 14.7400, lng: -91.1525 }, description: "Great coffee, breakfast was amazing, staff were friendly.", address: "Calle Del Frutal, Panajachel 07010", photos: [], tip: "Try the local pastries with your coffee." }
-    ];
-
     const categoryEmoji = {
       hotel: "🏨",
+      restaurant: "🍽️",
       coffee: "☕",
-      restaurant: "🍕",
       shop: "🛍️",
-      gym: "💪🏿"
+      gym: "💪"
     };
+
+    const places = [
+      {
+        country: "Guatemala",
+        city: "Antigua",
+        name: "Hotel Casa Donya",
+        category: "hotel",
+        position: { lat: 14.5592, lng: -90.7355 },
+        description: "Gorgeous hotel – breakfast was amazing, staff amazing, great location.",
+        photo: "https://www.booking.com/hotel/gt/casa-donya.html",
+        tip: "Try the breakfast pastries!",
+        link: "https://www.booking.com/hotel/gt/casa-donya.html",
+        address: "1A Calle Oriente 9A, Casa 9, Alameda Santa Rosa, Antigua, Guatemala"
+      },
+      {
+        country: "Guatemala",
+        city: "Antigua",
+        name: "Casa 9 Hotel Antigua",
+        category: "hotel",
+        position: { lat: 14.5586, lng: -90.7348 },
+        description: "Beautiful venue – pizza was phenomenal, staff was welcoming.",
+        photo: "https://en.planetofhotels.com/guatemala/antigua-guatemala/barrio-de-antonelli-casa-9",
+        tip: "Try the pizza!",
+        link: "https://en.planetofhotels.com/guatemala/antigua-guatemala/barrio-de-antonelli-casa-9",
+        address: "3a Calle Oriente 16a, Antigua Guatemala"
+      },
+      {
+        country: "Guatemala",
+        city: "Guatemala City",
+        name: "12 ONZAS",
+        category: "coffee",
+        position: { lat: 14.6342, lng: -90.5069 },
+        description: "Great coffee matcha and beautiful space to relax.",
+        photo: "https://www.instagram.com/12onzas/",
+        tip: "Try the matcha latte!",
+        link: "http://12onzas.com",
+        address: "Calle 3-57 13 | Zona 10, Guatemala City"
+      },
+      {
+        country: "Guatemala",
+        city: "Panajachel",
+        name: "Nativo Café",
+        category: "coffee",
+        position: { lat: 14.7400, lng: -91.1525 },
+        description: "Great coffee, breakfast was amazing, staff were friendly.",
+        photo: "https://www.instagram.com/nativo_cafe_/",
+        tip: "Try the house latte!",
+        link: "https://www.instagram.com/nativo_cafe_/",
+        address: "Calle Del Frutal, Panajachel 07010"
+      },
+      {
+        country: "Guatemala",
+        city: "Panajachel",
+        name: "The Little Spoon",
+        category: "restaurant",
+        position: { lat: 14.7410, lng: -91.1530 },
+        description: "Great breakfast – affordable, friendly staff very welcoming.",
+        photo: "https://www.instagram.com/thelittlespoon.gt/",
+        tip: "Try the soup of the day!",
+        link: "https://www.instagram.com/thelittlespoon.gt/",
+        address: "Calle Santander, Panajachel 07010"
+      },
+      {
+        country: "Guatemala",
+        city: "Lake Atitlan",
+        name: "Space Coffee",
+        category: "coffee",
+        position: { lat: 14.7290, lng: -91.1870 },
+        description: "Great coffee – amazing staff – beautiful space.",
+        photo: "https://www.instagram.com/spacecoffee502/",
+        tip: "Try the iced coffee!",
+        link: "https://www.instagram.com/spacecoffee502/",
+        address: "Santiago Atitlán zona 1, 02 AV 05-077, Calle las artesanías"
+      },
+      {
+        country: "Guatemala",
+        city: "Guatemala City",
+        name: "Oakland Mall",
+        category: "shop",
+        position: { lat: 14.6349, lng: -90.5090 },
+        description: "Beautiful mall! Very welcoming, no one following us around.",
+        photo: "https://www.instagram.com/oaklandplace.gt/",
+        tip: "Visit the food court on the top floor!",
+        link: "https://www.instagram.com/oaklandplace.gt/",
+        address: "Local 115 A, Calle Real de la Villa Guadalupe, 13-01, Zona 10"
+      },
+      {
+        country: "Guatemala",
+        city: "Guatemala City",
+        name: "Mega Paca",
+        category: "shop",
+        position: { lat: 14.6370, lng: -90.5110 },
+        description: "Thrift store – great deals, welcoming staff, huge.",
+        photo: "https://www.gettyimages.com/photos/megapaca",
+        tip: "Check the new arrivals section!",
+        link: "https://www.gettyimages.com/photos/megapaca",
+        address: "19 Avenida 10-63, Guatemala"
+      },
+      {
+        country: "Guatemala",
+        city: "Guatemala City",
+        name: "Smart Training Gym",
+        category: "gym",
+        position: { lat: 14.6350, lng: -90.5100 },
+        description: "Great vibes – get a smoothie from the desk.",
+        photo: "https://www.instagram.com/smarttraininggt/",
+        tip: "Ask for the protein smoothie!",
+        link: "https://www.instagram.com/smarttraininggt/",
+        address: "5 Av. 8-40 Zona 1, Guatemala City"
+      },
+      {
+        country: "Guatemala",
+        city: "Antigua",
+        name: "La Tasca",
+        category: "restaurant",
+        position: { lat: 14.5580, lng: -90.7340 },
+        description: "Great vibes – get the shrimp tostadas.",
+        photo: "https://www.instagram.com/latascaantigua/",
+        tip: "Try the shrimp tostadas!",
+        link: "https://www.instagram.com/latascaantigua/",
+        address: "2 Avenida, Magdalena Milpas Altas, Sacatepéquez"
+      }
+    ];
 
     function initMap() {
       map = new google.maps.Map(document.getElementById("map"), {
-        zoom: 3,
+        zoom: 5,
         center: { lat: 20.0, lng: -20.0 }
       });
 
       const list = document.getElementById("place-list");
-
       const grouped = {};
+
       places.forEach(place => {
         if (!grouped[place.country]) grouped[place.country] = {};
         if (!grouped[place.country][place.city]) grouped[place.country][place.city] = [];
@@ -134,52 +171,35 @@
           const ul = document.createElement("ul");
 
           grouped[country][city].forEach(place => {
-            const iconColors = {
-              hotel: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png",
-              coffee: "http://maps.google.com/mapfiles/ms/icons/green-dot.png",
-              restaurant: "http://maps.google.com/mapfiles/ms/icons/red-dot.png",
-              shop: "http://maps.google.com/mapfiles/ms/icons/yellow-dot.png",
-              gym: "http://maps.google.com/mapfiles/ms/icons/purple-dot.png"
-            };
-
             const marker = new google.maps.Marker({
               position: place.position,
               map: map,
               title: place.name,
-              icon: iconColors[place.category] || "http://maps.google.com/mapfiles/ms/icons/red-dot.png"
+              animation: google.maps.Animation.DROP
             });
 
-            const photos = place.photos.map(p => `<img src="${p}" class="pin-photo">`).join('');
-            const tip = place.tip ? `<p><strong>Community Tip:</strong> ${place.tip}</p>` : '';
+            const contentString = `
+              <h3>${categoryEmoji[place.category] || ""} ${place.name}</h3>
+              ${place.photo ? `<img src="${place.photo}" class="popup-photo">` : ''}
+              <p>${place.description}</p>
+              ${place.tip ? `<p><strong>Tip:</strong> ${place.tip}</p>` : ''}
+              ${place.link ? `<p><a href="${place.link}" target="_blank">More info</a></p>` : ''}
+              <p><em>${place.address}</em></p>
+            `;
 
-            const infoWindow = new google.maps.InfoWindow({
-              content: `
-                <div style="max-width:250px;">
-                  <h3>${place.name}</h3>
-                  <p>${place.description}</p>
-                  <p><em>${place.address}</em></p>
-                  ${photos}
-                  ${tip}
-                  <p>
-                    <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place.address)}" target="_blank">Get Directions</a>
-                  </p>
-                </div>
-              `
-            });
+            const infoWindow = new google.maps.InfoWindow({ content: contentString });
 
-            marker.addListener("click", () => {
-              infoWindow.open(map, marker);
-            });
+            marker.addListener("click", () => infoWindow.open(map, marker));
 
             const li = document.createElement("li");
-            const emoji = categoryEmoji[place.category] || "";
-            li.innerHTML = `${emoji} <strong>${place.name}</strong><br><small>${place.description}</small>`;
+            li.innerHTML = `${categoryEmoji[place.category] || ""} <strong>${place.name}</strong><br><small>${place.description}</small>`;
             li.addEventListener("click", () => {
               map.setCenter(place.position);
               map.setZoom(15);
               infoWindow.open(map, marker);
               document.getElementById("map").scrollIntoView({ behavior: "smooth" });
             });
+
             ul.appendChild(li);
           });
 
@@ -204,7 +224,7 @@
     <div id="place-list"></div>
   </div>
   <footer>
-    Zoe Atlas 🐞 | Built with love 💖
+    <p>Curated with ❤️ by Zoe</p>
   </footer>
 </body>
 </html>
