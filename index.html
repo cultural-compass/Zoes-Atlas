@@ -19,88 +19,80 @@
       background-color: #ff66b2;
       color: white;
       text-align: center;
-      padding: 20px;
+      padding: 15px; /* Slightly reduced padding for smaller screens */
+    }
+    header h1 {
+      font-size: 1.8em; /* Smaller header on mobile */
+      margin: 0;
+    }
+    header p {
+      font-size: 0.9em; /* Smaller tagline on mobile */
+      margin: 5px 0 0;
     }
     .main-container {
       display: flex;
       flex-grow: 1;
-      flex-direction: column;
-    }
-    @media (min-width: 768px) {
-      .main-container {
-        flex-direction: row;
-      }
+      flex-direction: column; /* Stack vertically on mobile */
     }
     #sidebar {
-      width: 100%;
+      width: 100%; /* Full width on mobile */
       background-color: #e6ffe6;
-      padding: 20px;
+      padding: 15px; /* Slightly less padding for mobile */
       overflow-y: auto;
-    }
-    @media (min-width: 768px) {
-      #sidebar {
-        width: 350px;
-        max-height: calc(100vh - 84px); /* Adjust based on header/footer size */
-        border-right: 2px solid #ff66b2;
-      }
+      order: 2; /* Puts sidebar below map on mobile by default */
     }
     #map {
-      height: 500px;
+      height: 400px; /* Fixed height for map on mobile */
       width: 100%;
-    }
-    @media (min-width: 768px) {
-      #map {
-        height: auto;
-        flex-grow: 1;
-      }
+      order: 1; /* Puts map above sidebar on mobile by default */
     }
     .controls {
       display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
+      flex-wrap: wrap; /* Allow search and filter to wrap */
+      gap: 8px; /* Slightly reduced gap */
       margin-bottom: 15px;
     }
-    .controls input[type="text"] {
-      padding: 8px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      flex-grow: 1;
-    }
+    .controls input[type="text"],
     .controls select {
-      padding: 8px;
+      padding: 7px; /* Smaller padding for controls */
       border: 1px solid #ccc;
       border-radius: 5px;
+      font-size: 0.9em; /* Smaller font in controls */
+      flex-grow: 1; /* Allow them to grow within flex-wrap */
+      min-width: 120px; /* Ensure controls don't get too narrow */
     }
     .places-list h2 {
       margin-top: 0;
       color: #ff3399;
+      font-size: 1.5em; /* Smaller list title on mobile */
     }
     details {
-      margin-bottom: 10px;
+      margin-bottom: 8px; /* Reduced margin */
       border: 1px solid #ccc;
       border-radius: 5px;
       background: white;
-      padding: 10px;
+      padding: 8px; /* Reduced padding */
     }
     summary {
       font-weight: bold;
-      font-size: 1.2em;
+      font-size: 1.1em; /* Smaller summary font */
       cursor: pointer;
       color: #222;
     }
     ul {
       list-style: none;
       padding: 0;
-      margin: 10px 0 0 15px;
+      margin: 8px 0 0 10px; /* Reduced margin */
     }
     li {
-      margin-bottom: 10px;
+      margin-bottom: 8px; /* Reduced margin */
       cursor: pointer;
-      padding: 8px;
+      padding: 6px; /* Reduced padding */
       border: 1px solid #ddd;
       border-radius: 5px;
       background: #fafafa;
       transition: background 0.3s;
+      font-size: 0.9em; /* Smaller list item font */
     }
     li:hover {
       background: #f0f0f0;
@@ -111,13 +103,71 @@
       text-align: center;
       padding: 10px;
       margin-top: auto;
+      font-size: 0.85em; /* Smaller footer font */
+    }
+
+    /* --- Desktop/Tablet styles (min-width: 768px) --- */
+    @media (min-width: 768px) {
+      header {
+        padding: 20px;
+      }
+      header h1 {
+        font-size: 2.5em; /* Original header size */
+      }
+      header p {
+        font-size: 1em; /* Original tagline size */
+      }
+      .main-container {
+        flex-direction: row; /* Sidebar next to map on larger screens */
+      }
+      #sidebar {
+        width: 350px; /* Fixed width for sidebar on desktop */
+        max-height: calc(100vh - 84px); /* Adjust based on header/footer size */
+        border-right: 2px solid #ff66b2;
+        order: 1; /* Sidebar on the left */
+        padding: 20px;
+      }
+      #map {
+        height: auto; /* Map takes remaining height */
+        flex-grow: 1;
+        order: 2; /* Map on the right */
+      }
+      .controls {
+        gap: 10px;
+      }
+      .controls input[type="text"],
+      .controls select {
+        padding: 8px;
+        font-size: 1em;
+      }
+      .places-list h2 {
+        font-size: 1.7em; /* Original list title size */
+      }
+      details {
+        margin-bottom: 10px;
+        padding: 10px;
+      }
+      summary {
+        font-size: 1.2em; /* Original summary font */
+      }
+      ul {
+        margin: 10px 0 0 15px;
+      }
+      li {
+        margin-bottom: 10px;
+        padding: 8px;
+        font-size: 1em; /* Original list item font */
+      }
+      footer {
+        font-size: 0.9em; /* Original footer font */
+      }
     }
   </style>
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB38rOcYSnjrdPynqMR6i0vpP8ZYi1Z2W4"></script>
   <script>
     let map;
     let markers = [];
-    
+
     const categoryEmoji = {
       hotel: "🏨",
       restaurant: "🍽️",
@@ -507,7 +557,7 @@
     function renderPlaces(filteredPlaces) {
       const list = document.getElementById("place-list");
       list.innerHTML = '';
-      
+
       const grouped = {};
       filteredPlaces.forEach(place => {
         if (!grouped[place.country]) grouped[place.country] = {};
@@ -526,7 +576,7 @@
           const citySummary = document.createElement("summary");
           citySummary.textContent = city;
           cityDetails.appendChild(citySummary);
-          
+
           const ul = document.createElement("ul");
           grouped[country][city].forEach(place => {
             ul.appendChild(createPlaceItem(place));
@@ -544,7 +594,7 @@
       // Clear existing markers
       markers.forEach(marker => marker.setMap(null));
       markers = [];
-      
+
       filteredPlaces.forEach(place => {
         const marker = new google.maps.Marker({
           position: place.position,
@@ -570,7 +620,7 @@
       const categoryFilter = document.getElementById("category-filter").value;
 
       const filtered = places.filter(place => {
-        const matchesSearch = place.name.toLowerCase().includes(searchTerm) || 
+        const matchesSearch = place.name.toLowerCase().includes(searchTerm) ||
                               place.description.toLowerCase().includes(searchTerm) ||
                               place.address.toLowerCase().includes(searchTerm);
         const matchesCategory = categoryFilter === "all" || place.category === categoryFilter;
@@ -580,7 +630,7 @@
       renderPlaces(filtered);
       addMarkersToMap(filtered);
     }
-    
+
     function initMap() {
       map = new google.maps.Map(document.getElementById("map"), {
         zoom: 5,
