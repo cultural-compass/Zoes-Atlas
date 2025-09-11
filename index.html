@@ -31,6 +31,7 @@
       flex: 1;
       height: 100%;
     }
+    /* Sidebar */
     #sidebar {
       width: 320px;
       max-width: 80%;
@@ -41,14 +42,19 @@
       position: fixed;
       top: 0;
       bottom: 0;
-      left: -340px;
+      left: -340px; /* hidden by default */
       transition: left 0.3s ease;
       z-index: 1000;
       display: flex;
       flex-direction: column;
     }
-    #sidebar.active { left: 0; }
-    #sidebar h2 { margin-top: 0; color: #ff3399; }
+    #sidebar.active {
+      left: 0;
+    }
+    #sidebar h2 {
+      margin-top: 0;
+      color: #ff3399;
+    }
     .controls {
       display: flex;
       flex-direction: column;
@@ -71,7 +77,10 @@
       border-radius: 5px;
       cursor: pointer;
     }
-    #place-list { flex-grow: 1; overflow-y: auto; }
+    #place-list {
+      flex-grow: 1;
+      overflow-y: auto;
+    }
     details {
       margin-bottom: 10px;
       border: 1px solid #ccc;
@@ -79,8 +88,15 @@
       background: white;
       padding: 5px;
     }
-    summary { font-weight: bold; cursor: pointer; }
-    ul { list-style: none; padding: 0; margin: 10px 0 0 10px; }
+    summary {
+      font-weight: bold;
+      cursor: pointer;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 10px 0 0 10px;
+    }
     li {
       margin-bottom: 8px;
       cursor: pointer;
@@ -90,7 +106,9 @@
       background: #fafafa;
       transition: background 0.3s;
     }
-    li:hover { background: #f0f0f0; }
+    li:hover {
+      background: #f0f0f0;
+    }
     #hamburger {
       position: fixed;
       top: 10px;
@@ -119,67 +137,57 @@
   <script>
     let map;
     let markers = [];
-    let infoWindow;
-    
+
     const places = [
-      // --- Ireland (Dublin) ---
-      { country:"Ireland", city:"Dublin", name:"Nine Crows Vintage", category:"🛍️", position:{lat:53.3437,lng:-6.2646}, description:"Curated Y2K vintage – diverse staff, fun vibe.", address:"22 Temple Lane S, Dublin 2, D02 HP52, Ireland" },
-      { country:"Ireland", city:"Dublin", name:"Lou's Lot (George's Street Arcade)", category:"🛍️", position:{lat:53.3425,lng:-6.2634}, description:"Luxury vintage inside the arcade.", address:"South Great George's Street, Dublin 2, Ireland" },
-      { country:"Ireland", city:"Dublin", name:"Copper and Straw", category:"☕", position:{lat:53.3461,lng:-6.2638}, description:"Great coffee & friendly staff.", address:"Aston Quay, Temple Bar, Dublin, D02 FV38, Ireland" },
-      { country:"Ireland", city:"Dublin", name:"George's Arcade", category:"🛍️", position:{lat:53.3430,lng:-6.2635}, description:"Open-air market full of character.", address:"South Great George's Street, Dublin 2, Ireland" },
-      { country:"Ireland", city:"Dublin", name:"Bambino's", category:"🍽️", position:{lat:53.3395,lng:-6.2651}, description:"Cozy pizza spot, local favorite.", address:"37 Stephen Street Lower, Dublin 2, D02 T862, Ireland" },
-      { country:"Ireland", city:"Dublin", name:"The Big Smoke Vintage Clothing", category:"🛍️", position:{lat:53.3452,lng:-6.2639}, description:"Vintage treasures by Merchant’s Arch.", address:"Merchant's Arch, Dublin 2, D02 WP27, Ireland" },
+      // -- Ireland (Dublin) --
+      { country:"Ireland", city:"Dublin", name:"Nine Crows Vintage", position:{lat:53.3437,lng:-6.2646}, description:"Curated Y2K vintage – diverse staff, fun vibe.", address:"22 Temple Lane S, Dublin 2, D02 HP52, Ireland" },
+      { country:"Ireland", city:"Dublin", name:"Lou's Lot (George's Street Arcade)", position:{lat:53.3425,lng:-6.2634}, description:"Luxury vintage inside the arcade.", address:"South Great George's Street, Dublin 2, Ireland" },
+      { country:"Ireland", city:"Dublin", name:"Copper and Straw", position:{lat:53.3461,lng:-6.2638}, description:"Great coffee & friendly staff.", address:"Aston Quay, Temple Bar, Dublin, D02 FV38, Ireland" },
+      { country:"Ireland", city:"Dublin", name:"George's Arcade", position:{lat:53.3430,lng:-6.2635}, description:"Open-air market full of character.", address:"South Great George's Street, Dublin 2, Ireland" },
+      { country:"Ireland", city:"Dublin", name:"Bambino's", position:{lat:53.3395,lng:-6.2651}, description:"Cozy pizza spot, local favorite.", address:"37 Stephen Street Lower, Dublin 2, D02 T862, Ireland" },
+      { country:"Ireland", city:"Dublin", name:"The Big Smoke Vintage Clothing", position:{lat:53.3452,lng:-6.2639}, description:"Vintage treasures by Merchant’s Arch.", address:"Merchant's Arch, Dublin 2, D02 WP27, Ireland" },
 
-      // --- Spain (Madrid) ---
-      { country:"Spain", city:"Madrid", name:"Amazing Coffee", category:"☕", position:{lat:40.4112,lng:-3.7035}, description:"Great vibe, Colombian owner – hot spot.", address:"C. de San Millán, 4, Centro, 28012 Madrid, Spain" },
-      { country:"Spain", city:"Madrid", name:"Hot Now Pizza", category:"🍽️", position:{lat:40.4235,lng:-3.6994}, description:"Great pizza spot.", address:"C. de Barbieri, 14, Centro, 28004 Madrid, Spain" },
-      { country:"Spain", city:"Madrid", name:"Han So Café", category:"☕", position:{lat:40.4240,lng:-3.7060}, description:"Trendy coffee + café spot in Malasaña.", address:"Calle Pez 20, Barrio Malasaña, 28004, Madrid" },
-      { country:"Spain", city:"Madrid", name:"San Miguel Market", category:"🛍️", position:{lat:40.4154,lng:-3.7094}, description:"Big, bustling market – must visit.", address:"Plaza de San Miguel, 28005 Madrid, Spain" },
-      { country:"Spain", city:"Madrid", name:"Honest Greens", category:"🍽️", position:{lat:40.4512,lng:-3.6889}, description:"Cheap & healthy food – any location works.", address:"Paseo de la Castellana, 89, 28046, Madrid" },
-      { country:"Spain", city:"Madrid", name:"Humana (Thrift Store)", category:"🛍️", position:{lat:40.4236,lng:-3.6717}, description:"Great deals, some items from €2, discounts on certain days.", address:"Calle de Alcalá, 171, 28009, Madrid" },
-      { country:"Spain", city:"Madrid", name:"By Pillow Hostel", category:"🏨", position:{lat:40.4107,lng:-3.7026}, description:"Great location, friendly staff.", address:"Calle de Jesús y María, 12, 28012, Madrid" },
-      { country:"Spain", city:"Madrid", name:"Ambu Nuñez Café", category:"☕", position:{lat:40.4292,lng:-3.6831}, description:"Excellent coffee – cold brew is amazing. Two locations.", address:"Calle Nuñez de Balboa 28, 28001 Madrid, Spain" },
-      { country:"Spain", city:"Madrid", name:"Alma Nomad Bakery", category:"🍽️", position:{lat:40.4368,lng:-3.7009}, description:"Great bakery – two locations, plus pizza shop nearby.", address:"C/ Sta. Feliciana 10, 28010 Madrid, Spain" },
-      { country:"Spain", city:"Madrid", name:"Alma Nomad Pizza", category:"🍽️", position:{lat:40.4365,lng:-3.7015}, description:"Delicious pizza by Alma Nomad Bakery.", address:"C. de Sta. Feliciana, 4, 28010 Madrid, Spain" },
+      // -- Spain (Madrid) --
+      { country:"Spain", city:"Madrid", name:"Amazing Coffee", position:{lat:40.4112,lng:-3.7035}, description:"Great vibe, Colombian owner – hot spot.", address:"C. de San Millán, 4, Centro, 28012 Madrid, Spain" },
+      { country:"Spain", city:"Madrid", name:"Hot Now Pizza", position:{lat:40.4235,lng:-3.6994}, description:"Great pizza spot.", address:"C. de Barbieri, 14, Centro, 28004 Madrid, Spain" },
+      { country:"Spain", city:"Madrid", name:"Han So Café", position:{lat:40.4240,lng:-3.7060}, description:"Trendy coffee + café spot in Malasaña.", address:"Calle Pez 20, Barrio Malasaña, 28004, Madrid" },
+      { country:"Spain", city:"Madrid", name:"San Miguel Market", position:{lat:40.4154,lng:-3.7094}, description:"Big, bustling market – must visit.", address:"Plaza de San Miguel, 28005 Madrid, Spain" },
+      { country:"Spain", city:"Madrid", name:"Honest Greens", position:{lat:40.4512,lng:-3.6889}, description:"Cheap & healthy food – any location works.", address:"Paseo de la Castellana, 89, 28046, Madrid" },
+      { country:"Spain", city:"Madrid", name:"Humana (Thrift Store)", position:{lat:40.4236,lng:-3.6717}, description:"Great deals, some items from €2, discounts on certain days.", address:"Calle de Alcalá, 171, 28009, Madrid" },
+      { country:"Spain", city:"Madrid", name:"By Pillow Hostel", position:{lat:40.4107,lng:-3.7026}, description:"Great location, friendly staff.", address:"Calle de Jesús y María, 12, 28012, Madrid" },
+      { country:"Spain", city:"Madrid", name:"Ambu Nuñez Café", position:{lat:40.4292,lng:-3.6831}, description:"Excellent coffee – cold brew is amazing. Two locations.", address:"Calle Nuñez de Balboa 28, 28001 Madrid, Spain" },
+      { country:"Spain", city:"Madrid", name:"Alma Nomad Bakery", position:{lat:40.4368,lng:-3.7009}, description:"Great bakery – two locations, plus pizza shop nearby.", address:"C/ Sta. Feliciana 10, 28010 Madrid, Spain" },
+      { country:"Spain", city:"Madrid", name:"Alma Nomad Pizza", position:{lat:40.4365,lng:-3.7015}, description:"Delicious pizza by Alma Nomad Bakery.", address:"C. de Sta. Feliciana, 4, 28010 Madrid, Spain" },
 
-      // --- Spain (Barcelona) ---
-      { country:"Spain", city:"Barcelona", name:"De La Creme", category:"🍽️", position:{lat:41.3907,lng:2.1594}, description:"Great gelato & friendly staff.", address:"Carrer d'Enric Granados, 15, 08007 Barcelona, Spain" },
-      { country:"Spain", city:"Barcelona", name:"Honest Greens", category:"🍽️", position:{lat:41.3888,lng:2.1590}, description:"Healthy, delicious food at good prices.", address:"Various locations, Barcelona, Spain" },
-      { country:"Spain", city:"Barcelona", name:"Hotel Market", category:"🏨", position:{lat:41.3787,lng:2.1598}, description:"Excellent location, great staff & accommodations.", address:"Carrer del Comte Borrell, 68, 08015 Barcelona, Spain" },
-      { country:"Spain", city:"Barcelona", name:"Papa Dâm", category:"🍽️", position:{lat:41.3779,lng:2.1623}, description:"Delicious food – try the garlic rice!", address:"Rda. de Sant Pau, 11, 08015 Barcelona, Spain" },
-      { country:"Spain", city:"Barcelona", name:"Origo", category:"☕", position:{lat:41.3778,lng:2.1638}, description:"Amazing staff, cardamom bun + coffee spot.", address:"Rda. de Sant Pau, 67, 08015 Barcelona, Spain" },
+      // -- Spain (Barcelona) --
+      { country:"Spain", city:"Barcelona", name:"De La Creme", position:{lat:41.3907,lng:2.1594}, description:"Great gelato & friendly staff.", address:"Carrer d'Enric Granados, 15, 08007 Barcelona, Spain" },
+      { country:"Spain", city:"Barcelona", name:"Honest Greens", position:{lat:41.3888,lng:2.1590}, description:"Healthy, delicious food at good prices.", address:"Various locations, Barcelona, Spain" },
+      { country:"Spain", city:"Barcelona", name:"Hotel Market", position:{lat:41.3787,lng:2.1598}, description:"Excellent location, great staff & accommodations.", address:"Carrer del Comte Borrell, 68, 08015 Barcelona, Spain" },
+      { country:"Spain", city:"Barcelona", name:"Papa Dâm", position:{lat:41.3779,lng:2.1623}, description:"Delicious food – try the garlic rice!", address:"Rda. de Sant Pau, 11, 08015 Barcelona, Spain" },
+      { country:"Spain", city:"Barcelona", name:"Origo", position:{lat:41.3778,lng:2.1638}, description:"Amazing staff, cardamom bun + coffee spot.", address:"Rda. de Sant Pau, 67, 08015 Barcelona, Spain" },
 
-      // --- Guatemala ---
-      { country:"Guatemala", city:"Antigua", name:"Hotel Casa Doña Antonia", category:"🏨", position:{lat:14.5560,lng:-90.7336}, description:"Gorgeous hotel – breakfast amazing, staff so welcoming.", address:"1A Calle Oriente 9A, Casa 9, Alameda Santa Rosa, Antigua, Guatemala" },
-      { country:"Guatemala", city:"Antigua", name:"Casa Donya Hotel Antigua", category:"🏨", position:{lat:14.5591,lng:-90.7340}, description:"Beautiful venue – phenomenal pizza, welcoming staff.", address:"3a Calle Oriente 16a, Antigua Guatemala, Sacatepéquez" },
-      { country:"Guatemala", city:"Antigua", name:"La Tasca", category:"🍽️", position:{lat:14.5825,lng:-90.6768}, description:"Great vibes – get the shrimp tostadas.", address:"2 Avenida, Magdalena Milpas Altas, Sacatepéquez" },
-      { country:"Guatemala", city:"Guatemala City", name:"12 ONZAS", category:"☕", position:{lat:14.6039,lng:-90.4880}, description:"Great coffee & matcha, beautiful space to relax.", address:"Calle 3-57 13, Zona 10, Guatemala City, 01010", link:"https://12onzas.com" },
-      { country:"Guatemala", city:"Guatemala City", name:"Oakland Mall", category:"🛍️", position:{lat:14.6019,lng:-90.5133}, description:"Beautiful mall – very welcoming.", address:"Local 115 A, Calle Real de la Villa Guadalupe, 13-01, Zona 10, Guatemala City" },
-      { country:"Guatemala", city:"Guatemala City", name:"Mega Paca (Thrift Store)", category:"🛍️", position:{lat:14.6291,lng:-90.5174}, description:"Huge thrift store, great deals, welcoming staff.", address:"19 Avenida 10-63, Guatemala, 01011" },
-      { country:"Guatemala", city:"Guatemala City", name:"Smart Training Gym", category:"🏋🏾", position:{lat:14.6357,lng:-90.5132}, description:"Great vibes – grab a smoothie at the desk!", address:"5 Av. 8-40 Zona 1, Guatemala City, Guatemala" },
-      { country:"Guatemala", city:"Panajachel", name:"Nativo Café", category:"☕", position:{lat:14.7419,lng:-91.1569}, description:"Great coffee, breakfast amazing, friendly staff.", address:"Calle Del Frutal, Panajachel 07010" },
-      { country:"Guatemala", city:"Panajachel", name:"The Little Spoon", category:"🍽️", position:{lat:14.7424,lng:-91.1571}, description:"Great breakfast, affordable, welcoming staff.", address:"Calle Santander, Panajachel 07010" },
-      { country:"Guatemala", city:"Santiago Atitlán", name:"Space Coffee", category:"☕", position:{lat:14.6355,lng:-91.2290}, description:"Great coffee, amazing staff, beautiful space.", address:"02 AV 05-077, Calle las artesanías, Santiago Atitlán" }
+      // -- Guatemala (Antigua) --
+      { country:"Guatemala", city:"Antigua", name:"Hotel Casa Doña Antonia", position:{lat:14.5560,lng:-90.7336}, description:"Gorgeous hotel – breakfast amazing, staff so welcoming.", address:"1A Calle Oriente 9A, Casa 9, Alameda Santa Rosa, Antigua, Guatemala" },
+      { country:"Guatemala", city:"Antigua", name:"Casa Donya Hotel Antigua", position:{lat:14.5591,lng:-90.7340}, description:"Beautiful venue – phenomenal pizza, welcoming staff.", address:"3a Calle Oriente 16a, Antigua Guatemala, Sacatepéquez" },
+      { country:"Guatemala", city:"Antigua", name:"La Tasca", position:{lat:14.5825,lng:-90.6768}, description:"Great vibes – get the shrimp tostadas.", address:"2 Avenida, Magdalena Milpas Altas, Sacatepéquez" },
+
+      // -- Guatemala (Guatemala City) --
+      { country:"Guatemala", city:"Guatemala City", name:"12 ONZAS", position:{lat:14.6039,lng:-90.4880}, description:"Great coffee & matcha, beautiful space to relax.", address:"Calle 3-57 13, Zona 10, Guatemala City, 01010", link:"https://12onzas.com" },
+      { country:"Guatemala", city:"Guatemala City", name:"Oakland Mall", position:{lat:14.6019,lng:-90.5133}, description:"Beautiful mall – very welcoming.", address:"Local 115 A, Calle Real de la Villa Guadalupe, 13-01, Zona 10, Guatemala City" },
+      { country:"Guatemala", city:"Guatemala City", name:"Mega Paca (Thrift Store)", position:{lat:14.6291,lng:-90.5174}, description:"Huge thrift store, great deals, welcoming staff.", address:"19 Avenida 10-63, Guatemala, 01011" },
+      { country:"Guatemala", city:"Guatemala City", name:"Smart Training Gym", position:{lat:14.6357,lng:-90.5132}, description:"Great vibes – grab a smoothie at the desk!", address:"5 Av. 8-40 Zona 1, Guatemala City, Guatemala" },
+
+      // -- Guatemala (Panajachel) --
+      { country:"Guatemala", city:"Panajachel", name:"Nativo Café", position:{lat:14.7419,lng:-91.1569}, description:"Great coffee, breakfast amazing, friendly staff.", address:"Calle Del Frutal, Panajachel 07010" },
+      { country:"Guatemala", city:"Panajachel", name:"The Little Spoon", position:{lat:14.7424,lng:-91.1571}, description:"Great breakfast, affordable, welcoming staff.", address:"Calle Santander, Panajachel 07010" },
+
+      // -- Guatemala (Lake Atitlán / Santiago Atitlán) --
+      { country:"Guatemala", city:"Santiago Atitlán", name:"Space Coffee", position:{lat:14.6355,lng:-91.2290}, description:"Great coffee, amazing staff, beautiful space.", address:"02 AV 05-077, Calle las artesanías, Santiago Atitlán" }
     ];
 
-    function initMap() {
-      map = new google.maps.Map(document.getElementById("map"), {
-        zoom: 3,
-        center: { lat: 20, lng: -20 }
-      });
-
-      infoWindow = new google.maps.InfoWindow();
-      addMarkers(places);
-      renderPlaces(places);
-
-      document.getElementById("search-bar").addEventListener("keyup", filterPlaces);
-      document.getElementById("reset-view").addEventListener("click", resetView);
-    }
-
-    function addMarkers(filteredPlaces) {
+    function addMarkersToMap(filteredPlaces) {
       markers.forEach(marker => marker.setMap(null));
       markers = [];
-
       filteredPlaces.forEach(place => {
         const marker = new google.maps.Marker({
           position: place.position,
@@ -187,16 +195,10 @@
           title: place.name,
           animation: google.maps.Animation.DROP
         });
-
-        marker.addListener("click", () => {
-          let content = `<h3>${place.category} ${place.name}</h3>
-                         <p>${place.description}</p>
-                         <p><em>${place.address}</em></p>`;
-          if(place.link) content += `<p><a href="${place.link}" target="_blank">Website</a></p>`;
-          infoWindow.setContent(content);
-          infoWindow.open(map, marker);
+        const infoWindow = new google.maps.InfoWindow({
+          content: `<h3>${place.name}</h3><p>${place.description}</p><p><em>${place.address}</em></p>${place.link ? `<p><a href="${place.link}" target="_blank">Website</a></p>` : ''}`
         });
-
+        marker.addListener("click", () => infoWindow.open(map, marker));
         markers.push(marker);
       });
     }
@@ -205,40 +207,34 @@
       const list = document.getElementById("place-list");
       list.innerHTML = '';
       const grouped = {};
-
       filteredPlaces.forEach(place => {
-        if(!grouped[place.country]) grouped[place.country] = {};
-        if(!grouped[place.country][place.city]) grouped[place.country][place.city] = [];
+        if (!grouped[place.country]) grouped[place.country] = {};
+        if (!grouped[place.country][place.city]) grouped[place.country][place.city] = [];
         grouped[place.country][place.city].push(place);
       });
-
       Object.keys(grouped).forEach(country => {
         const countryDetails = document.createElement("details");
         const countrySummary = document.createElement("summary");
         countrySummary.textContent = country;
         countryDetails.appendChild(countrySummary);
-
         Object.keys(grouped[country]).forEach(city => {
           const cityDetails = document.createElement("details");
           const citySummary = document.createElement("summary");
           citySummary.textContent = city;
           cityDetails.appendChild(citySummary);
-
           const ul = document.createElement("ul");
           grouped[country][city].forEach(place => {
             const li = document.createElement("li");
-            li.innerHTML = `${place.category} <strong>${place.name}</strong><br><small>${place.description}</small>`;
+            li.innerHTML = `<strong>${place.name}</strong><br><small>${place.description}</small>`;
             li.addEventListener("click", () => {
               map.setCenter(place.position);
               map.setZoom(15);
+              document.getElementById("sidebar").classList.remove("active");
               const marker = markers.find(m => m.title === place.name);
-              if(marker){
-                let content = `<h3>${place.category} ${place.name}</h3>
-                               <p>${place.description}</p>
-                               <p><em>${place.address}</em></p>`;
-                if(place.link) content += `<p><a href="${place.link}" target="_blank">Website</a></p>`;
-                infoWindow.setContent(content);
-                infoWindow.open(map, marker);
+              if (marker) {
+                new google.maps.InfoWindow({
+                  content: `<h3>${place.name}</h3><p>${place.description}</p><p><em>${place.address}</em></p>${place.link ? `<p><a href="${place.link}" target="_blank">Website</a></p>` : ''}`
+                }).open(map, marker);
               }
             });
             ul.appendChild(li);
@@ -252,21 +248,32 @@
 
     function filterPlaces() {
       const term = document.getElementById("search-bar").value.toLowerCase();
-      const filtered = places.filter(p => 
-        p.name.toLowerCase().includes(term) ||
-        p.description.toLowerCase().includes(term) ||
-        p.address.toLowerCase().includes(term)
-      );
+      const filtered = places.filter(p => p.name.toLowerCase().includes(term) ||
+                                          p.description.toLowerCase().includes(term) ||
+                                          p.address.toLowerCase().includes(term));
       renderPlaces(filtered);
-      addMarkers(filtered);
+      addMarkersToMap(filtered);
+      if(document.getElementById("sidebar").classList.contains("active")) {
+        document.getElementById("sidebar").classList.remove("active");
+      }
     }
 
     function resetView() {
-      document.getElementById("search-bar").value = "";
+      document.getElementById("search-bar").value = '';
       map.setZoom(3);
-      map.setCenter({lat:20, lng:-20});
+      map.setCenter({ lat: 20, lng: -20 });
+      filterPlaces();
+    }
+
+    function initMap() {
+      map = new google.maps.Map(document.getElementById("map"), {
+        zoom: 3,
+        center: { lat: 20, lng: -20 }
+      });
+      addMarkersToMap(places);
       renderPlaces(places);
-      addMarkers(places);
+      document.getElementById("search-bar").addEventListener("keyup", filterPlaces);
+      document.getElementById("reset-view").addEventListener("click", resetView);
     }
 
     function toggleSidebar() {
@@ -279,8 +286,7 @@
   <div id="sidebar">
     <header>
       <h1>Zoe Atlas 🐞</h1>
-      <p>Curated, Black-friendly, and welcoming spots across the globe.<br>
-      Click a place to zoom in & see details.</p>
+      <p>Curated, Black-friendly, and welcoming spots across the globe.<br>Click a place to zoom in & see details.</p>
     </header>
     <div class="controls">
       <input type="text" id="search-bar" placeholder="Search places..." aria-label="Search places">
