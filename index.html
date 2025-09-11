@@ -4,235 +4,267 @@
   <meta charset="UTF-8">
   <title>Zoe's Atlas 🐞</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Google Maps API -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB38rOcYSnjrdPynqMR6i0vpP8ZYi1Z2W4"></script>
+  
   <style>
-    /* Reset & base */
-    body, html {
+    /* Body & Map */
+    body {
       margin: 0;
-      padding: 0;
       font-family: Arial, sans-serif;
-      height: 100%;
+      display: flex;
+      height: 100vh;
       overflow: hidden;
+      background-color: #f8f8f8;
+    }
+    #map {
+      flex: 1;
+      height: 100%;
     }
 
     /* Header */
     header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      background-color: #ff66b2;
-      color: white;
-      z-index: 1100;
-      padding: 15px;
+      background-color: #ff85c1;
+      color: #fff;
+      text-align: center;
+      padding: 80px 20px 20px;
+      border-bottom: 3px solid #e0559e;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      z-index: 1001;
       box-sizing: border-box;
-      border-bottom: 3px solid #ff3399;
     }
     header h1 {
       margin: 0;
-      font-size: 1.8em;
+      font-size: 2.2em;
+      line-height: 1.2;
     }
     header p {
-      margin: 5px 0 0;
+      margin: 15px 0 0;
       font-size: 1em;
+      max-width: 600px;
+      line-height: 1.5;
     }
 
     /* Hamburger */
     #hamburger {
-      position: fixed;
-      top: 18px;
-      left: 18px;
-      z-index: 1200;
-      background: #ff3399;
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      z-index: 1100;
+      background: #e0559e;
       color: white;
       border: none;
       font-size: 24px;
-      padding: 6px 12px;
+      padding: 8px 12px;
       border-radius: 5px;
       cursor: pointer;
     }
 
     /* Sidebar */
     #sidebar {
+      width: 300px;
+      max-width: 80%;
+      background: #f0fff0;
+      border-right: 3px solid #ff85c1;
+      overflow-y: auto;
+      padding: 10px;
       position: fixed;
       top: 0;
-      left: -350px;
-      width: 300px;
-      height: 100%;
-      background-color: #f5f5f5;
-      box-shadow: 2px 0 8px rgba(0,0,0,0.15);
-      overflow-y: auto;
+      bottom: 0;
+      left: -320px;
       transition: left 0.3s ease;
-      z-index: 1050;
-      padding: 80px 15px 15px 15px; /* space for header */
-      box-sizing: border-box;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
     }
-    #sidebar.active { left: 0; }
+    #sidebar.active {
+      left: 0;
+    }
     #sidebar h2 {
       margin-top: 0;
-      color: #ff3399;
+      color: #e0559e;
     }
-    #place-list details {
-      margin-bottom: 8px;
-      border: 1px solid #ddd;
+
+    /* Controls */
+    .controls {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    #search-bar {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-sizing: border-box;
+    }
+    #reset-view {
+      width: 100%;
+      padding: 8px;
+      border: none;
+      background-color: #e0559e;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    #place-list {
+      flex-grow: 1;
+      overflow-y: auto;
+    }
+
+    details {
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
       border-radius: 5px;
       background: white;
       padding: 5px;
     }
-    summary { cursor: pointer; font-weight: bold; }
+    summary {
+      font-weight: bold;
+      cursor: pointer;
+      color: #333;
+    }
     ul {
       list-style: none;
-      padding-left: 15px;
-      margin: 5px 0 0 0;
+      padding: 0;
+      margin: 10px 0 0 10px;
     }
     li {
+      margin-bottom: 8px;
+      cursor: pointer;
       padding: 6px;
-      margin-bottom: 5px;
+      border: 1px solid #ddd;
       border-radius: 4px;
       background: #fafafa;
-      border: 1px solid #ddd;
-      cursor: pointer;
-      transition: background 0.2s;
+      transition: background 0.3s;
     }
-    li:hover { background: #f0f0f0; }
-
-    /* Search */
-    .controls {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-bottom: 15px;
-    }
-    #search-bar {
-      padding: 8px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-      width: 100%;
-      box-sizing: border-box;
-    }
-    #reset-view {
-      padding: 8px;
-      border: none;
-      border-radius: 5px;
-      background: #ff66b2;
-      color: white;
-      cursor: pointer;
-    }
-
-    /* Map */
-    #map { 
-      height: 100%; 
-      width: 100%; 
-      margin-top: 70px; /* header height */
+    li:hover {
+      background: #f0f0f0;
     }
 
     /* Footer */
     footer {
+      background-color: #ff85c1;
+      color: white;
+      text-align: center;
+      padding: 8px;
       position: fixed;
       bottom: 0;
       width: 100%;
-      background: #ff66b2;
-      color: white;
-      text-align: center;
-      padding: 6px 0;
       font-size: 0.9em;
-      z-index: 1100;
     }
 
-    /* Responsive adjustments */
-    @media(max-width: 600px) {
-      #sidebar { width: 240px; }
+    /* Mobile adjustments */
+    @media (max-width: 768px) {
+      #sidebar {
+        width: 250px;
+      }
+      header {
+        padding: 100px 15px 15px;
+      }
+      header h1 {
+        font-size: 1.8em;
+      }
+      header p {
+        font-size: 0.95em;
+        max-width: 90%;
+      }
+      #hamburger {
+        top: 15px;
+        left: 15px;
+      }
     }
   </style>
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB38rOcYSnjrdPynqMR6i0vpP8ZYi1Z2W4"></script>
+  
   <script>
     let map;
     let markers = [];
 
     const places = [
-      // Ireland - Dublin
-      {country:"Ireland", city:"Dublin", name:"Nine Crows Vintage ☕", position:{lat:53.3437,lng:-6.2646}, description:"Curated Y2K vintage – diverse staff, fun vibe.", address:"22 Temple Lane S, Dublin 2, D02 HP52, Ireland"},
-      {country:"Ireland", city:"Dublin", name:"Lou's Lot (George's Street Arcade) 🛍️", position:{lat:53.3425,lng:-6.2634}, description:"Luxury vintage inside the arcade.", address:"South Great George's Street, Dublin 2, Ireland"},
-      {country:"Ireland", city:"Dublin", name:"Copper and Straw ☕", position:{lat:53.3461,lng:-6.2638}, description:"Great coffee & friendly staff.", address:"Aston Quay, Temple Bar, Dublin, D02 FV38, Ireland"},
-      {country:"Ireland", city:"Dublin", name:"George's Arcade 🛍️", position:{lat:53.3430,lng:-6.2635}, description:"Open-air market full of character.", address:"South Great George's Street, Dublin 2, Ireland"},
-      {country:"Ireland", city:"Dublin", name:"Bambino's 🍕", position:{lat:53.3395,lng:-6.2651}, description:"Cozy pizza spot, local favorite.", address:"37 Stephen Street Lower, Dublin 2, D02 T862, Ireland"},
-      {country:"Ireland", city:"Dublin", name:"The Big Smoke Vintage Clothing 🛍️", position:{lat:53.3452,lng:-6.2639}, description:"Vintage treasures by Merchant’s Arch.", address:"Merchant's Arch, Dublin 2, D02 WP27, Ireland"},
+      // --- Ireland (Dublin) ---
+      { country:"Ireland", city:"Dublin", name:"Nine Crows Vintage", position:{lat:53.3437,lng:-6.2646}, description:"Curated Y2K vintage – diverse staff, fun vibe.", address:"22 Temple Lane S, Dublin 2, D02 HP52, Ireland" },
+      { country:"Ireland", city:"Dublin", name:"Lou's Lot (George's Street Arcade)", position:{lat:53.3425,lng:-6.2634}, description:"Luxury vintage inside the arcade.", address:"South Great George's Street, Dublin 2, Ireland" },
+      { country:"Ireland", city:"Dublin", name:"Copper and Straw", position:{lat:53.3461,lng:-6.2638}, description:"Great coffee & friendly staff.", address:"Aston Quay, Temple Bar, Dublin, D02 FV38, Ireland" },
+      { country:"Ireland", city:"Dublin", name:"George's Arcade", position:{lat:53.3430,lng:-6.2635}, description:"Open-air market full of character.", address:"South Great George's Street, Dublin 2, Ireland" },
+      { country:"Ireland", city:"Dublin", name:"Bambino's", position:{lat:53.3395,lng:-6.2651}, description:"Cozy pizza spot, local favorite.", address:"37 Stephen Street Lower, Dublin 2, D02 T862, Ireland" },
+      { country:"Ireland", city:"Dublin", name:"The Big Smoke Vintage Clothing", position:{lat:53.3452,lng:-6.2639}, description:"Vintage treasures by Merchant’s Arch.", address:"Merchant's Arch, Dublin 2, D02 WP27, Ireland" },
 
-      // Spain - Madrid
-      {country:"Spain", city:"Madrid", name:"Amazing Coffee ☕", position:{lat:40.4112,lng:-3.7035}, description:"Great vibe, Colombian owner – hot spot.", address:"C. de San Millán, 4, Centro, 28012 Madrid, Spain"},
-      {country:"Spain", city:"Madrid", name:"Hot Now Pizza 🍕", position:{lat:40.4235,lng:-3.6994}, description:"Great pizza spot.", address:"C. de Barbieri, 14, Centro, 28004 Madrid, Spain"},
-      {country:"Spain", city:"Madrid", name:"Han So Café ☕", position:{lat:40.4240,lng:-3.7060}, description:"Trendy coffee + café spot in Malasaña.", address:"Calle Pez 20, Barrio Malasaña, 28004, Madrid"},
-      {country:"Spain", city:"Madrid", name:"San Miguel Market 🛍️", position:{lat:40.4154,lng:-3.7094}, description:"Big, bustling market – must visit.", address:"Plaza de San Miguel, 28005 Madrid, Spain"},
-      {country:"Spain", city:"Madrid", name:"Honest Greens 🥗", position:{lat:40.4512,lng:-3.6889}, description:"Cheap & healthy food – any location works.", address:"Paseo de la Castellana, 89, 28046, Madrid"},
-      {country:"Spain", city:"Madrid", name:"Humana (Thrift Store) 🛍️", position:{lat:40.4236,lng:-3.6717}, description:"Great deals, some items from €2.", address:"Calle de Alcalá, 171, 28009, Madrid"},
+      // --- Spain (Madrid) ---
+      { country:"Spain", city:"Madrid", name:"Amazing Coffee", position:{lat:40.4112,lng:-3.7035}, description:"Great vibe, Colombian owner – hot spot.", address:"C. de San Millán, 4, Centro, 28012 Madrid, Spain" },
+      { country:"Spain", city:"Madrid", name:"Hot Now Pizza", position:{lat:40.4235,lng:-3.6994}, description:"Great pizza spot.", address:"C. de Barbieri, 14, Centro, 28004 Madrid, Spain" },
+      { country:"Spain", city:"Madrid", name:"Han So Café", position:{lat:40.4240,lng:-3.7060}, description:"Trendy coffee + café spot in Malasaña.", address:"Calle Pez 20, Barrio Malasaña, 28004, Madrid" },
+      { country:"Spain", city:"Madrid", name:"San Miguel Market", position:{lat:40.4154,lng:-3.7094}, description:"Big, bustling market – must visit.", address:"Plaza de San Miguel, 28005 Madrid, Spain" },
+      { country:"Spain", city:"Madrid", name:"Honest Greens", position:{lat:40.4512,lng:-3.6889}, description:"Cheap & healthy food – any location works.", address:"Paseo de la Castellana, 89, 28046, Madrid" },
 
-      // Spain - Barcelona
-      {country:"Spain", city:"Barcelona", name:"De La Creme 🍦", position:{lat:41.3907,lng:2.1594}, description:"Great gelato & friendly staff.", address:"Carrer d'Enric Granados, 15, 08007 Barcelona, Spain"},
-      {country:"Spain", city:"Barcelona", name:"Honest Greens 🥗", position:{lat:41.3888,lng:2.1590}, description:"Healthy, delicious food at good prices.", address:"Various locations, Barcelona, Spain"},
-      {country:"Spain", city:"Barcelona", name:"Hotel Market 🏨", position:{lat:41.3787,lng:2.1598}, description:"Excellent location, great staff & accommodations.", address:"Carrer del Comte Borrell, 68, 08015 Barcelona, Spain"},
-      {country:"Spain", city:"Barcelona", name:"Papa Dâm 🍴", position:{lat:41.3779,lng:2.1623}, description:"Delicious food – try the garlic rice!", address:"Rda. de Sant Pau, 11, 08015 Barcelona, Spain"},
+      // --- Spain (Barcelona) ---
+      { country:"Spain", city:"Barcelona", name:"De La Creme", position:{lat:41.3907,lng:2.1594}, description:"Great gelato & friendly staff.", address:"Carrer d'Enric Granados, 15, 08007 Barcelona, Spain" },
+      { country:"Spain", city:"Barcelona", name:"Honest Greens", position:{lat:41.3888,lng:2.1590}, description:"Healthy, delicious food at good prices.", address:"Various locations, Barcelona, Spain" },
+      { country:"Spain", city:"Barcelona", name:"Hotel Market", position:{lat:41.3787,lng:2.1598}, description:"Excellent location, great staff & accommodations.", address:"Carrer del Comte Borrell, 68, 08015 Barcelona, Spain" },
 
-      // Guatemala - Antigua
-      {country:"Guatemala", city:"Antigua", name:"Hotel Casa Doña Antonia 🏨", position:{lat:14.5560,lng:-90.7336}, description:"Gorgeous hotel – breakfast amazing, staff so welcoming.", address:"1A Calle Oriente 9A, Casa 9, Alameda Santa Rosa, Antigua, Guatemala"},
+      // --- Guatemala (Antigua) ---
+      { country:"Guatemala", city:"Antigua", name:"Hotel Casa Doña Antonia", position:{lat:14.5560,lng:-90.7336}, description:"Gorgeous hotel – breakfast amazing, staff so welcoming.", address:"1A Calle Oriente 9A, Casa 9, Alameda Santa Rosa, Antigua, Guatemala" },
 
-      // Guatemala - Guatemala City
-      {country:"Guatemala", city:"Guatemala City", name:"12 ONZAS ☕", position:{lat:14.6039,lng:-90.4880}, description:"Great coffee & matcha, beautiful space to relax.", address:"Calle 3-57 13, Zona 10, Guatemala City, 01010", link:"https://12onzas.com"},
-      {country:"Guatemala", city:"Guatemala City", name:"Smart Training Gym 🏋🏾‍♀️", position:{lat:14.6357,lng:-90.5132}, description:"Great vibes – grab a smoothie at the desk!", address:"5 Av. 8-40 Zona 1, Guatemala City, Guatemala"}
+      // --- Guatemala (Guatemala City) ---
+      { country:"Guatemala", city:"Guatemala City", name:"12 ONZAS", position:{lat:14.6039,lng:-90.4880}, description:"Great coffee & matcha, beautiful space to relax.", address:"Calle 3-57 13, Zona 10, Guatemala City, 01010", link:"https://12onzas.com" }
     ];
 
-    function addMarkers(filtered) {
-      markers.forEach(m => m.setMap(null));
+    function addMarkersToMap(filteredPlaces) {
+      markers.forEach(marker => marker.setMap(null));
       markers = [];
-      filtered.forEach(place => {
+
+      filteredPlaces.forEach(place => {
         const marker = new google.maps.Marker({
           position: place.position,
           map: map,
           title: place.name,
           animation: google.maps.Animation.DROP
         });
-        let content = `<h3>${place.name}</h3><p>${place.description}</p><p><em>${place.address}</em></p>`;
-        if(place.link) content += `<p><a href="${place.link}" target="_blank">Website</a></p>`;
-        const info = new google.maps.InfoWindow({ content });
-        marker.addListener("click", () => info.open(map, marker));
+        const infoWindow = new google.maps.InfoWindow({
+          content: `<h3>${place.name}</h3><p>${place.description}</p><p><em>${place.address}</em></p>` + (place.link ? `<p><a href="${place.link}" target="_blank">Website</a></p>` : "")
+        });
+        marker.addListener("click", () => infoWindow.open(map, marker));
         markers.push(marker);
       });
     }
 
-    function renderSidebar(filtered) {
+    function renderPlaces(filteredPlaces) {
       const list = document.getElementById("place-list");
-      list.innerHTML = "";
+      list.innerHTML = '';
       const grouped = {};
-      filtered.forEach(p => {
-        if(!grouped[p.country]) grouped[p.country] = {};
-        if(!grouped[p.country][p.city]) grouped[p.country][p.city] = [];
-        grouped[p.country][p.city].push(p);
+      filteredPlaces.forEach(place => {
+        if (!grouped[place.country]) grouped[place.country] = {};
+        if (!grouped[place.country][place.city]) grouped[place.country][place.city] = [];
+        grouped[place.country][place.city].push(place);
       });
 
       Object.keys(grouped).forEach(country => {
         const countryDetails = document.createElement("details");
-        const cSum = document.createElement("summary");
-        cSum.textContent = country;
-        countryDetails.appendChild(cSum);
+        const countrySummary = document.createElement("summary");
+        countrySummary.textContent = country;
+        countryDetails.appendChild(countrySummary);
 
         Object.keys(grouped[country]).forEach(city => {
           const cityDetails = document.createElement("details");
-          const citySum = document.createElement("summary");
-          citySum.textContent = city;
-          cityDetails.appendChild(citySum);
+          const citySummary = document.createElement("summary");
+          citySummary.textContent = city;
+          cityDetails.appendChild(citySummary);
           const ul = document.createElement("ul");
-
           grouped[country][city].forEach(place => {
             const li = document.createElement("li");
             li.innerHTML = `<strong>${place.name}</strong><br><small>${place.description}</small>`;
             li.addEventListener("click", () => {
               map.setCenter(place.position);
               map.setZoom(15);
-              document.getElementById("sidebar").classList.remove("active");
-              const marker = markers.find(m=>m.title===place.name);
-              if(marker){
-                new google.maps.InfoWindow({
-                  content:`<h3>${place.name}</h3><p>${place.description}</p><p><em>${place.address}</em></p>${place.link?`<p><a href="${place.link}" target="_blank">Website</a></p>`:""}`
-                }).open(map, marker);
-              }
+              const marker = markers.find(m => m.title === place.name);
+              if (marker) new google.maps.InfoWindow({content: `<h3>${place.name}</h3><p>${place.description}</p><p><em>${place.address}</em></p>`}).open(map, marker);
             });
             ul.appendChild(li);
           });
@@ -244,28 +276,30 @@
     }
 
     function filterPlaces() {
-      const term = document.getElementById("search-bar").value.toLowerCase();
-      const filtered = places.filter(p => 
-        p.name.toLowerCase().includes(term) || 
-        p.description.toLowerCase().includes(term) || 
-        p.address.toLowerCase().includes(term)
+      const searchTerm = document.getElementById("search-bar").value.toLowerCase();
+      const filtered = places.filter(place =>
+        place.name.toLowerCase().includes(searchTerm) ||
+        place.description.toLowerCase().includes(searchTerm) ||
+        place.address.toLowerCase().includes(searchTerm)
       );
-      addMarkers(filtered);
-      renderSidebar(filtered);
+      renderPlaces(filtered);
+      addMarkersToMap(filtered);
     }
 
     function resetView() {
-      document.getElementById("search-bar").value="";
-      map.setCenter({lat:20,lng:-20});
+      document.getElementById("search-bar").value = "";
       map.setZoom(3);
-      addMarkers(places);
-      renderSidebar(places);
+      map.setCenter({ lat: 20, lng: -20 });
+      filterPlaces();
     }
 
     function initMap() {
-      map = new google.maps.Map(document.getElementById("map"), {zoom:3, center:{lat:20,lng:-20}});
-      addMarkers(places);
-      renderSidebar(places);
+      map = new google.maps.Map(document.getElementById("map"), {
+        zoom: 3,
+        center: { lat: 20, lng: -20 }
+      });
+      addMarkersToMap(places);
+      renderPlaces(places);
       document.getElementById("search-bar").addEventListener("keyup", filterPlaces);
       document.getElementById("reset-view").addEventListener("click", resetView);
     }
@@ -276,23 +310,23 @@
   </script>
 </head>
 <body onload="initMap()">
-  <header>
-    <h1>Zoe's Atlas 🐞</h1>
-    <p>A living guide of Black-friendly, welcoming spots worldwide. Use the search, click a location to zoom, or explore the drop-down lists by country & city!</p>
-  </header>
-
   <button id="hamburger" onclick="toggleSidebar()">☰</button>
-
   <div id="sidebar">
+    <header>
+      <h1>Zoe's Atlas 🐞</h1>
+      <p>A curated map of Black-friendly, welcoming spots globally. Click a place to zoom in and see details. Use the search bar to find places quickly. 🗺️✨</p>
+    </header>
     <div class="controls">
-      <input id="search-bar" type="text" placeholder="Search places..." />
+      <input type="text" id="search-bar" placeholder="Search places..." aria-label="Search places">
       <button id="reset-view">View All Locations</button>
     </div>
+    <h2>Places</h2>
     <div id="place-list"></div>
   </div>
-
   <div id="map"></div>
-
-  <footer>Curated with ❤️ by Zoe</footer>
+  <footer>
+    <p>Curated with ❤️ by Zoe</p>
+  </footer>
 </body>
 </html>
+
