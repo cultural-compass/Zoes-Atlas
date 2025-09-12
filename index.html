@@ -1,181 +1,116 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>Zoe Atlas 🐞</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-  body, html { margin:0; padding:0; height:100%; font-family:'Arial', sans-serif; }
+<!-- Floating Dropdown Panel -->
+<div class="floating-dropdown">
+  <select id="locationSelect">
+    <option value="">-- Select a location --</option>
+    <!-- Dublin, Ireland -->
+    <option value="53.3498,-6.2603">Dublin: Temple Bar</option>
+    <option value="53.3441,-6.2675">Dublin: Trinity College</option>
 
-  /* Header */
-  header {
-    width:100%;
-    padding:15px;
-    background: linear-gradient(135deg, #8e44ad, #ff6b81, #1abc9c);
-    color:white;
-    text-align:center;
-    box-shadow:0 2px 6px rgba(0,0,0,0.2);
-  }
-  header h1 { margin:0; font-size:2em; }
-  header p { margin:5px 0 0 0; font-size:0.95em; }
+    <!-- Madrid, Spain -->
+    <option value="40.4168,-3.7038">Madrid: Plaza Mayor</option>
+    <option value="40.4220,-3.6920">Madrid: Retiro Park</option>
 
-  /* Map */
-  #map { width:100%; height:calc(100% - 280px); }
+    <!-- Barcelona, Spain -->
+    <option value="41.3851,2.1734">Barcelona: La Sagrada Familia</option>
+    <option value="41.3825,2.1769">Barcelona: Gothic Quarter</option>
 
-  /* Bottom panel */
-  #bottom-panel {
-    position:fixed;
-    bottom:0;
-    left:0;
-    width:100%;
-    max-height:280px;
-    background:#E6E6FA; /* light lavender */
-    color:#333;
-    overflow-y:auto;
-    border-top:3px solid #8e44ad;
-    padding:10px 15px;
-    box-sizing:border-box;
-    z-index:1000;
-    transition: max-height 0.3s ease;
-  }
-  #panel-toggle {
-    text-align:center;
-    cursor:pointer;
-    font-weight:bold;
-    margin-bottom:5px;
-  }
-  #bottom-panel h2 { margin:0 0 5px 0; font-size:1.1em; color:#8e44ad; text-align:center; }
-  #search-bar { width:100%; padding:6px; border-radius:4px; border:none; margin-bottom:10px; }
+    <!-- Guatemala -->
+    <option value="14.6349,-90.5069">Guatemala City: Central Market</option>
+    <option value="14.6091,-90.5250">Antigua: Santa Catalina Arch</option>
+  </select>
+</div>
 
-  details { margin-bottom:5px; border-radius:4px; background:#f8f8ff; padding:5px; border:1px solid #dcdcff; color:#1b2631; }
-  summary { cursor:pointer; font-weight:bold; }
-  ul { list-style:none; padding-left:15px; margin:5px 0 0 0; }
-  li { padding:4px 6px; margin-bottom:4px; border-radius:4px; background:#f0f0ff; cursor:pointer; transition:0.2s; }
-  li:hover { background:#d8d8ff; }
-
-  /* Scrollbar for panel */
-  #bottom-panel::-webkit-scrollbar { width:8px; }
-  #bottom-panel::-webkit-scrollbar-thumb { background:#8e44ad; border-radius:4px; }
-
-  @media (max-width:768px){
-    #map { height:calc(100% - 320px); }
-  }
-</style>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB38rOcYSnjrdPynqMR6i0vpP8ZYi1Z2W4"></script>
-<script>
-let map, markers=[], currentInfoWindow=null;
-const places=[
-  // --- all your places (Ireland, Spain, Guatemala) --- same as previous code ---
-];
-
-function initMap(){
-  map=new google.maps.Map(document.getElementById("map"),{ zoom:3, center:{lat:20,lng:-20} });
-  addMarkers(places);
-  renderPanel(places);
-  document.getElementById("search-bar").addEventListener("keyup", filterPlaces);
-  document.getElementById("panel-toggle").addEventListener("click", () => {
-    const panel=document.getElementById("bottom-panel");
-    if(panel.style.maxHeight==="50px") panel.style.maxHeight="280px";
-    else panel.style.maxHeight="50px";
-  });
-}
-
-function addMarkers(list){
-  markers.forEach(m=>m.setMap(null));
-  markers=[];
-  list.forEach(p=>{
-    const marker=new google.maps.Marker({
-      position:p.position,
-      map:map,
-      title:p.name,
-      animation:google.maps.Animation.DROP
-    });
-    const info=new google.maps.InfoWindow({
-      content:`<h3>${p.name}</h3><p>${p.description}</p><p><em>${p.address}</em></p>${p.link?`<p><a href="${p.link}" target="_blank">Website/IG</a></p>`:''}`
-    });
-    marker.addListener("click",()=>{
-      if(currentInfoWindow) currentInfoWindow.close();
-      info.open(map,marker);
-      currentInfoWindow=info;
-    });
-    markers.push(marker);
-  });
-}
-
-function renderPanel(list){
-  const panel=document.getElementById("bottom-list");
-  panel.innerHTML='';
-  const grouped={};
-  list.forEach(p=>{
-    if(!grouped[p.country]) grouped[p.country]={};
-    if(!grouped[p.country][p.city]) grouped[p.country][p.city]=[];
-    grouped[p.country][p.city].push(p);
-  });
-
-  Object.keys(grouped).forEach(country=>{
-    const countryDet=document.createElement("details"); countryDet.open=false;
-    const countrySum=document.createElement("summary"); countrySum.textContent=country;
-    countryDet.appendChild(countrySum);
-
-    Object.keys(grouped[country]).forEach(city=>{
-      const cityDet=document.createElement("details"); cityDet.open=false;
-      const citySum=document.createElement("summary"); citySum.textContent=city;
-      cityDet.appendChild(citySum);
-
-      const ul=document.createElement("ul");
-      grouped[country][city].forEach(place=>{
-        const li=document.createElement("li");
-        li.innerHTML=`<strong>${place.name}</strong><br><small>${place.description}</small>`;
-        li.addEventListener("click",()=>{
-          map.panTo(place.position);
-          map.setZoom(15);
-          const marker=markers.find(m=>m.title===place.name);
-          if(marker){
-            if(currentInfoWindow) currentInfoWindow.close();
-            currentInfoWindow=new google.maps.InfoWindow({content:`<h3>${place.name}</h3><p>${place.description}</p><p><em>${place.address}</em></p>${place.link?`<p><a href="${place.link}" target="_blank">Website/IG</a></p>`:''}`});
-            currentInfoWindow.open(map,marker);
-          }
-          document.querySelectorAll("#bottom-list details details").forEach(d=>d.open=false);
-        });
-        li.addEventListener("mouseenter", ()=>{
-          const marker=markers.find(m=>m.title===place.name);
-          if(marker) marker.setAnimation(google.maps.Animation.BOUNCE);
-        });
-        li.addEventListener("mouseleave", ()=>{
-          const marker=markers.find(m=>m.title===place.name);
-          if(marker) marker.setAnimation(null);
-        });
-        ul.appendChild(li);
-      });
-      cityDet.appendChild(ul);
-      countryDet.appendChild(cityDet);
-      citySum.addEventListener("click",()=>{ document.querySelectorAll("#bottom-list details details").forEach(other=>{ if(other!==cityDet) other.open=false; }); });
-    });
-    panel.appendChild(countryDet);
-  });
-}
-
-function filterPlaces(){
-  const term=document.getElementById("search-bar").value.toLowerCase();
-  const filtered=places.filter(p=>p.name.toLowerCase().includes(term) || p.description.toLowerCase().includes(term) || p.address.toLowerCase().includes(term));
-  renderPanel(filtered);
-  addMarkers(filtered);
-}
-</script>
-</head>
-<body onload="initMap()">
-<header>
-  <h1>Zoe's Atlas 🐞</h1>
-  <p>Discover curated, welcoming spots! Click a place below to zoom in on the map.</p>
-</header>
-
+<!-- Map Container -->
 <div id="map"></div>
 
-<div id="bottom-panel">
-  <div id="panel-toggle">⬆️ Click to Expand/Collapse</div>
-  <h2>Search & Explore</h2>
-  <input type="text" id="search-bar" placeholder="Search for a place..." aria-label="Search places">
-  <div id="bottom-list"></div>
-</div>
-</body>
-</html>
+<style>
+  /* Map Full Width */
+  #map {
+    width: 100%;
+    height: 100vh;
+    position: relative;
+  }
+
+  /* Floating dropdown styling */
+  .floating-dropdown {
+    position: absolute;
+    top: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    width: 90%;
+    max-width: 400px;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 12px 16px;
+    border-radius: 25px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  }
+
+  .floating-dropdown select {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 16px;
+    border-radius: 25px;
+    border: 1px solid #ccc;
+    outline: none;
+    background-color: #fff;
+  }
+
+  @media (max-width: 768px) {
+    .floating-dropdown {
+      width: 95%;
+      padding: 10px 14px;
+    }
+    .floating-dropdown select {
+      font-size: 14px;
+      padding: 8px 10px;
+    }
+  }
+</style>
+
+<script>
+  let map;
+  let currentMarker = null;
+
+  function initMap() {
+    map = new google.maps.Map(document.getElementById("map"), {
+      center: { lat: 40.4168, lng: -3.7038 },
+      zoom: 6,
+    });
+
+    const customIcon = {
+      url: "https://example.com/your-custom-icon.png", // replace with your marker image
+      scaledSize: new google.maps.Size(40, 40),
+    };
+
+    document.getElementById("locationSelect").addEventListener("change", function() {
+      const value = this.value;
+      if (!value) return;
+
+      const [lat, lng] = value.split(",").map(Number);
+      const position = { lat, lng };
+
+      // Remove old marker
+      if (currentMarker) {
+        currentMarker.setMap(null);
+      }
+
+      // Add new custom marker
+      currentMarker = new google.maps.Marker({
+        position,
+        map,
+        icon: customIcon,
+        animation: google.maps.Animation.DROP,
+      });
+
+      // Zoom to location
+      map.setCenter(position);
+      map.setZoom(12);
+    });
+  }
+</script>
+
+<script async defer
+  src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap">
+</script>
+
