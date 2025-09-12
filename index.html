@@ -5,8 +5,22 @@
 <title>Zoe Atlas 🐞</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-  body, html { margin:0; padding:0; height:100%; font-family: Arial, sans-serif; }
-  #map { width: 100%; height: 100%; }
+  body, html { margin:0; padding:0; height:100%; font-family: 'Arial', sans-serif; }
+
+  /* Header */
+  header {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(135deg, #8e44ad, #3498db, #ff6b81);
+    color: white;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  }
+  header h1 { margin: 0; font-size: 2em; }
+  header p { margin: 5px 0 0 0; font-size: 0.95em; }
+
+  /* Map */
+  #map { width: 100%; height: calc(100% - 270px); }
 
   /* Bottom panel */
   #bottom-panel {
@@ -15,52 +29,43 @@
     left: 0;
     width: 100%;
     max-height: 180px;
-    background: #1a1a2e; /* dark purple base */
+    background: #5dade2; /* lighter, softer blue */
     color: #fff;
     overflow-y: auto;
-    border-top: 4px solid #6a0572; /* accent */
+    border-top: 4px solid #8e44ad;
     padding: 10px 15px;
     box-sizing: border-box;
     z-index: 1000;
   }
+  #bottom-panel h2 { margin: 0 0 5px 0; font-size: 1.1em; color: #ff6b81; text-align: center; }
 
-  #bottom-panel h2 {
-    margin: 0 0 5px 0;
-    font-size: 1.1em;
-    color: #ff6b81; /* soft pink */
-    text-align: center;
-  }
-
-  details { margin-bottom: 5px; border-radius: 4px; background: #162447; padding: 5px; border: 1px solid #415a77; }
-  summary { cursor: pointer; font-weight: bold; color: #e43f5a; }
+  details { margin-bottom: 5px; border-radius: 4px; background: #aed6f1; padding: 5px; border: 1px solid #3498db; color:#1b2631; }
+  summary { cursor: pointer; font-weight: bold; }
   ul { list-style:none; padding-left:15px; margin:5px 0 0 0; }
-  li { padding: 4px 6px; margin-bottom: 4px; border-radius: 4px; background: #1f4068; cursor:pointer; transition:0.2s; }
-  li:hover { background: #0f3460; }
+  li { padding: 4px 6px; margin-bottom: 4px; border-radius: 4px; background: #d6eaf8; cursor:pointer; transition:0.2s; }
+  li:hover { background: #85c1e9; }
 
   /* Scrollbar for panel */
   #bottom-panel::-webkit-scrollbar { width: 8px; }
-  #bottom-panel::-webkit-scrollbar-thumb { background: #6a0572; border-radius: 4px; }
+  #bottom-panel::-webkit-scrollbar-thumb { background: #8e44ad; border-radius: 4px; }
+
+  @media (max-width:768px){
+    #map { height: calc(100% - 300px); }
+  }
 </style>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB38rOcYSnjrdPynqMR6i0vpP8ZYi1Z2W4"></script>
 <script>
   let map;
   let markers = [];
   const places = [
-    // Ireland
     {country:"Ireland", city:"Dublin", name:"Nine Crows Vintage", position:{lat:53.3437,lng:-6.2646}, description:"Curated Y2K vintage.", address:"22 Temple Lane S, Dublin 2", link:""},
-    {country:"Ireland", city:"Dublin", name:"Lou's Lot", position:{lat:53.3425,lng:-6.2634}, description:"Luxury vintage inside arcade.", address:"South Great George's Street, Dublin 2", link:""},
-    // Spain
     {country:"Spain", city:"Madrid", name:"Amazing Coffee", position:{lat:40.4112,lng:-3.7035}, description:"Great vibe, Colombian owner.", address:"C. de San Millán 4, Madrid", link:""},
     {country:"Spain", city:"Barcelona", name:"De La Creme", position:{lat:41.3907,lng:2.1594}, description:"Great gelato & staff.", address:"Carrer d'Enric Granados 15, Barcelona", link:""},
-    // Guatemala
     {country:"Guatemala", city:"Guatemala City", name:"12 ONZAS", position:{lat:14.6039,lng:-90.4880}, description:"Great coffee & matcha.", address:"Calle 3-57 13, Zona 10", link:"https://12onzas.com"}
   ];
 
   function initMap(){
-    map = new google.maps.Map(document.getElementById("map"), {
-      zoom: 3,
-      center: {lat:20,lng:-20}
-    });
+    map = new google.maps.Map(document.getElementById("map"), { zoom:3, center:{lat:20,lng:-20} });
     addMarkers(places);
     renderPanel(places);
   }
@@ -69,12 +74,7 @@
     markers.forEach(m=>m.setMap(null));
     markers=[];
     list.forEach(p=>{
-      const marker=new google.maps.Marker({
-        position:p.position,
-        map:map,
-        title:p.name,
-        animation:google.maps.Animation.DROP
-      });
+      const marker=new google.maps.Marker({ position:p.position, map:map, title:p.name, animation:google.maps.Animation.DROP });
       const info=new google.maps.InfoWindow({content:`<h3>${p.name}</h3><p>${p.description}</p><p><em>${p.address}</em></p>${p.link?`<p><a href="${p.link}" target="_blank">Website</a></p>`:''}`});
       marker.addListener('click',()=>info.open(map,marker));
       markers.push(marker);
@@ -85,33 +85,21 @@
     const panel=document.getElementById("bottom-list");
     panel.innerHTML='';
     const grouped={};
-    list.forEach(p=>{
-      if(!grouped[p.country]) grouped[p.country]={};
-      if(!grouped[p.country][p.city]) grouped[p.country][p.city]=[];
-      grouped[p.country][p.city].push(p);
-    });
+    list.forEach(p=>{ if(!grouped[p.country]) grouped[p.country]={}; if(!grouped[p.country][p.city]) grouped[p.country][p.city]=[]; grouped[p.country][p.city].push(p); });
 
     Object.keys(grouped).forEach(country=>{
-      const countryDet=document.createElement("details");
-      countryDet.open=false;
-      const countrySum=document.createElement("summary");
-      countrySum.textContent=country;
-      countryDet.appendChild(countrySum);
+      const countryDet=document.createElement("details"); countryDet.open=false;
+      const countrySum=document.createElement("summary"); countrySum.textContent=country; countryDet.appendChild(countrySum);
 
       Object.keys(grouped[country]).forEach(city=>{
-        const cityDet=document.createElement("details");
-        cityDet.open=false;
-        const citySum=document.createElement("summary");
-        citySum.textContent=city;
-        cityDet.appendChild(citySum);
+        const cityDet=document.createElement("details"); cityDet.open=false;
+        const citySum=document.createElement("summary"); citySum.textContent=city; cityDet.appendChild(citySum);
 
         const ul=document.createElement("ul");
         grouped[country][city].forEach(place=>{
-          const li=document.createElement("li");
-          li.innerHTML=`<strong>${place.name}</strong><br><small>${place.description}</small>`;
+          const li=document.createElement("li"); li.innerHTML=`<strong>${place.name}</strong><br><small>${place.description}</small>`;
           li.addEventListener("click",()=>{
-            map.setCenter(place.position);
-            map.setZoom(15);
+            map.setCenter(place.position); map.setZoom(15);
             const marker=markers.find(m=>m.title===place.name);
             if(marker){
               const info=new google.maps.InfoWindow({content:`<h3>${place.name}</h3><p>${place.description}</p><p><em>${place.address}</em></p>${place.link?`<p><a href="${place.link}" target="_blank">Website</a></p>`:''}`});
@@ -123,23 +111,21 @@
         });
         cityDet.appendChild(ul);
         countryDet.appendChild(cityDet);
-
-        citySum.addEventListener("click",()=> {
-          document.querySelectorAll(`#bottom-list details details`).forEach(other=>{
-            if(other!==cityDet) other.open=false;
-          });
-        });
+        citySum.addEventListener("click",()=>{ document.querySelectorAll("#bottom-list details details").forEach(other=>{ if(other!==cityDet) other.open=false; }); });
       });
-
       panel.appendChild(countryDet);
     });
   }
 </script>
 </head>
 <body onload="initMap()">
+  <header>
+    <h1>Zoe's Atlas 🐞</h1>
+    <p>Discover curated, welcoming spots! Click a place below to zoom in on the map.</p>
+  </header>
   <div id="map"></div>
   <div id="bottom-panel">
-    <h2>Zoe's Atlas 🐞</h2>
+    <h2>Search & Explore</h2>
     <div id="bottom-list"></div>
   </div>
 </body>
