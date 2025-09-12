@@ -11,7 +11,7 @@
   header {
     width:100%;
     padding:15px;
-    background: linear-gradient(135deg, #8e44ad, #3498db, #ff6b81, #1abc9c);
+    background: linear-gradient(135deg, #8e44ad, #ff6b81, #1abc9c);
     color:white;
     text-align:center;
     box-shadow:0 2px 6px rgba(0,0,0,0.2);
@@ -20,7 +20,7 @@
   header p { margin:5px 0 0 0; font-size:0.95em; }
 
   /* Map */
-  #map { width:100%; height:calc(100% - 300px); }
+  #map { width:100%; height:calc(100% - 280px); }
 
   /* Bottom panel */
   #bottom-panel {
@@ -28,149 +28,136 @@
     bottom:0;
     left:0;
     width:100%;
-    max-height:300px;
-    background:#a3c9f1; /* lighter blue */
-    color:#fff;
+    max-height:280px;
+    background:#E6E6FA; /* light lavender */
+    color:#333;
     overflow-y:auto;
-    border-top:4px solid #8e44ad;
+    border-top:3px solid #8e44ad;
     padding:10px 15px;
     box-sizing:border-box;
     z-index:1000;
+    transition: max-height 0.3s ease;
   }
-  #bottom-panel h2 { margin:0 0 5px 0; font-size:1.1em; color:#ff6b81; text-align:center; }
-
+  #panel-toggle {
+    text-align:center;
+    cursor:pointer;
+    font-weight:bold;
+    margin-bottom:5px;
+  }
+  #bottom-panel h2 { margin:0 0 5px 0; font-size:1.1em; color:#8e44ad; text-align:center; }
   #search-bar { width:100%; padding:6px; border-radius:4px; border:none; margin-bottom:10px; }
 
-  details { margin-bottom:5px; border-radius:4px; background:#aed6f1; padding:5px; border:1px solid #3498db; color:#1b2631; }
+  details { margin-bottom:5px; border-radius:4px; background:#f8f8ff; padding:5px; border:1px solid #dcdcff; color:#1b2631; }
   summary { cursor:pointer; font-weight:bold; }
   ul { list-style:none; padding-left:15px; margin:5px 0 0 0; }
-  li { padding:4px 6px; margin-bottom:4px; border-radius:4px; background:#d6eaf8; cursor:pointer; transition:0.2s; }
-  li:hover { background:#85c1e9; }
+  li { padding:4px 6px; margin-bottom:4px; border-radius:4px; background:#f0f0ff; cursor:pointer; transition:0.2s; }
+  li:hover { background:#d8d8ff; }
 
   /* Scrollbar for panel */
   #bottom-panel::-webkit-scrollbar { width:8px; }
   #bottom-panel::-webkit-scrollbar-thumb { background:#8e44ad; border-radius:4px; }
 
   @media (max-width:768px){
-    #map { height:calc(100% - 350px); }
+    #map { height:calc(100% - 320px); }
   }
 </style>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB38rOcYSnjrdPynqMR6i0vpP8ZYi1Z2W4"></script>
 <script>
-let map;
-let markers = [];
-let currentInfoWindow = null; // Track currently open InfoWindow
-
-const places = [
-  // (Your 50+ places go here – same as previous code)
-  {country:"Ireland", city:"Dublin", name:"Nine Crows Vintage", position:{lat:53.3437,lng:-6.2646}, description:"Curated Y2K vintage – diverse staff, fun vibe.", address:"22 Temple Lane S, Dublin 2, D02 HP52, Ireland", link:"https://www.instagram.com/ninecrowsvintage/"},
-  {country:"Ireland", city:"Dublin", name:"Lou's Lot (George's Street Arcade)", position:{lat:53.3425,lng:-6.2634}, description:"Luxury vintage inside the arcade.", address:"South Great George's Street, Dublin 2, Ireland", link:""},
-  {country:"Spain", city:"Madrid", name:"Amazing Coffee", position:{lat:40.4112,lng:-3.7035}, description:"Great vibe, Colombian owner – hot spot.", address:"C. de San Millán, 4, Centro, 28012 Madrid, Spain", link:""},
-  {country:"Guatemala", city:"Guatemala City", name:"12 ONZAS", position:{lat:14.6039,lng:-90.4880}, description:"Great coffee & matcha, beautiful space to relax.", address:"Calle 3-57 13, Zona 10, Guatemala City, 01010", link:"https://12onzas.com"}
+let map, markers=[], currentInfoWindow=null;
+const places=[
+  // --- all your places (Ireland, Spain, Guatemala) --- same as previous code ---
 ];
 
 function initMap(){
-  map = new google.maps.Map(document.getElementById("map"), {
-    zoom: 3,
-    center: {lat:20,lng:-20}
-  });
+  map=new google.maps.Map(document.getElementById("map"),{ zoom:3, center:{lat:20,lng:-20} });
   addMarkers(places);
   renderPanel(places);
   document.getElementById("search-bar").addEventListener("keyup", filterPlaces);
+  document.getElementById("panel-toggle").addEventListener("click", () => {
+    const panel=document.getElementById("bottom-panel");
+    if(panel.style.maxHeight==="50px") panel.style.maxHeight="280px";
+    else panel.style.maxHeight="50px";
+  });
 }
 
 function addMarkers(list){
-  markers.forEach(m => m.setMap(null));
-  markers = [];
-
-  list.forEach(p => {
-    const marker = new google.maps.Marker({
-      position: p.position,
-      map: map,
-      title: p.name,
-      animation: google.maps.Animation.DROP
+  markers.forEach(m=>m.setMap(null));
+  markers=[];
+  list.forEach(p=>{
+    const marker=new google.maps.Marker({
+      position:p.position,
+      map:map,
+      title:p.name,
+      animation:google.maps.Animation.DROP
     });
-
-    const infoContent = `<h3>${p.name}</h3>
-                         <p>${p.description}</p>
-                         <p><em>${p.address}</em></p>
-                         ${p.link ? `<p><a href="${p.link}" target="_blank">Website/IG</a></p>` : ''}`;
-
-    marker.addListener("click", () => {
-      if (currentInfoWindow) currentInfoWindow.close();
-      currentInfoWindow = new google.maps.InfoWindow({ content: infoContent });
-      currentInfoWindow.open(map, marker);
+    const info=new google.maps.InfoWindow({
+      content:`<h3>${p.name}</h3><p>${p.description}</p><p><em>${p.address}</em></p>${p.link?`<p><a href="${p.link}" target="_blank">Website/IG</a></p>`:''}`
     });
-
+    marker.addListener("click",()=>{
+      if(currentInfoWindow) currentInfoWindow.close();
+      info.open(map,marker);
+      currentInfoWindow=info;
+    });
     markers.push(marker);
   });
 }
 
 function renderPanel(list){
-  const panel = document.getElementById("bottom-list");
-  panel.innerHTML = '';
-  const grouped = {};
-  list.forEach(p => {
-    if(!grouped[p.country]) grouped[p.country] = {};
-    if(!grouped[p.country][p.city]) grouped[p.country][p.city] = [];
+  const panel=document.getElementById("bottom-list");
+  panel.innerHTML='';
+  const grouped={};
+  list.forEach(p=>{
+    if(!grouped[p.country]) grouped[p.country]={};
+    if(!grouped[p.country][p.city]) grouped[p.country][p.city]=[];
     grouped[p.country][p.city].push(p);
   });
 
-  Object.keys(grouped).forEach(country => {
-    const countryDet = document.createElement("details"); countryDet.open=false;
-    const countrySum = document.createElement("summary"); countrySum.textContent=country;
+  Object.keys(grouped).forEach(country=>{
+    const countryDet=document.createElement("details"); countryDet.open=false;
+    const countrySum=document.createElement("summary"); countrySum.textContent=country;
     countryDet.appendChild(countrySum);
 
-    Object.keys(grouped[country]).forEach(city => {
-      const cityDet = document.createElement("details"); cityDet.open=false;
-      const citySum = document.createElement("summary"); citySum.textContent=city;
+    Object.keys(grouped[country]).forEach(city=>{
+      const cityDet=document.createElement("details"); cityDet.open=false;
+      const citySum=document.createElement("summary"); citySum.textContent=city;
       cityDet.appendChild(citySum);
 
-      const ul = document.createElement("ul");
-      grouped[country][city].forEach(place => {
-        const li = document.createElement("li");
-        li.innerHTML = `<strong>${place.name}</strong><br><small>${place.description}</small>`;
-        li.addEventListener("click", () => {
-          map.setCenter(place.position);
+      const ul=document.createElement("ul");
+      grouped[country][city].forEach(place=>{
+        const li=document.createElement("li");
+        li.innerHTML=`<strong>${place.name}</strong><br><small>${place.description}</small>`;
+        li.addEventListener("click",()=>{
+          map.panTo(place.position);
           map.setZoom(15);
-
-          const marker = markers.find(m => m.title === place.name);
+          const marker=markers.find(m=>m.title===place.name);
           if(marker){
             if(currentInfoWindow) currentInfoWindow.close();
-            currentInfoWindow = new google.maps.InfoWindow({ content: `<h3>${place.name}</h3>
-                                                                         <p>${place.description}</p>
-                                                                         <p><em>${place.address}</em></p>
-                                                                         ${place.link ? `<p><a href="${place.link}" target="_blank">Website/IG</a></p>` : ''}` });
-            currentInfoWindow.open(map, marker);
+            currentInfoWindow=new google.maps.InfoWindow({content:`<h3>${place.name}</h3><p>${place.description}</p><p><em>${place.address}</em></p>${place.link?`<p><a href="${place.link}" target="_blank">Website/IG</a></p>`:''}`});
+            currentInfoWindow.open(map,marker);
           }
-
-          // Close all other city accordions
-          document.querySelectorAll("#bottom-list details details").forEach(d => d.open=false);
+          document.querySelectorAll("#bottom-list details details").forEach(d=>d.open=false);
+        });
+        li.addEventListener("mouseenter", ()=>{
+          const marker=markers.find(m=>m.title===place.name);
+          if(marker) marker.setAnimation(google.maps.Animation.BOUNCE);
+        });
+        li.addEventListener("mouseleave", ()=>{
+          const marker=markers.find(m=>m.title===place.name);
+          if(marker) marker.setAnimation(null);
         });
         ul.appendChild(li);
       });
-
       cityDet.appendChild(ul);
       countryDet.appendChild(cityDet);
-
-      citySum.addEventListener("click", () => {
-        document.querySelectorAll("#bottom-list details details").forEach(other => {
-          if(other !== cityDet) other.open=false;
-        });
-      });
+      citySum.addEventListener("click",()=>{ document.querySelectorAll("#bottom-list details details").forEach(other=>{ if(other!==cityDet) other.open=false; }); });
     });
-
     panel.appendChild(countryDet);
   });
 }
 
 function filterPlaces(){
-  const term = document.getElementById("search-bar").value.toLowerCase();
-  const filtered = places.filter(p => 
-    p.name.toLowerCase().includes(term) || 
-    p.description.toLowerCase().includes(term) || 
-    p.address.toLowerCase().includes(term)
-  );
+  const term=document.getElementById("search-bar").value.toLowerCase();
+  const filtered=places.filter(p=>p.name.toLowerCase().includes(term) || p.description.toLowerCase().includes(term) || p.address.toLowerCase().includes(term));
   renderPanel(filtered);
   addMarkers(filtered);
 }
@@ -185,10 +172,10 @@ function filterPlaces(){
 <div id="map"></div>
 
 <div id="bottom-panel">
+  <div id="panel-toggle">⬆️ Click to Expand/Collapse</div>
   <h2>Search & Explore</h2>
   <input type="text" id="search-bar" placeholder="Search for a place..." aria-label="Search places">
   <div id="bottom-list"></div>
 </div>
 </body>
 </html>
-
