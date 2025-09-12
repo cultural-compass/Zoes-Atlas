@@ -2,23 +2,48 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Zoe Atlas 🐞</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zoe’s Atlas 🐞✨</title>
   <style>
-    body {
+    body, html {
       margin: 0;
       padding: 0;
       font-family: Arial, sans-serif;
+      height: 100%;
+      background: #ffe6f0; /* Zoe pink background */
+      color: #333;
+    }
+
+    header {
+      text-align: center;
+      padding: 20px 10px 10px;
+      background-color: #fff;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 28px;
+      color: #e91e63; /* bright pink */
+    }
+
+    header p {
+      margin: 5px 0 0;
+      font-size: 16px;
+      color: #4caf50; /* green accent */
     }
 
     #map {
       width: 100%;
-      height: 100vh;
-      position: relative;
+      height: calc(100vh - 120px); /* full screen minus header/footer space */
     }
 
     .floating-dropdown {
       position: absolute;
-      top: 15px;
+      top: 20px;
       left: 50%;
       transform: translateX(-50%);
       z-index: 9999;
@@ -40,10 +65,21 @@
       background-color: #fff;
     }
 
+    footer {
+      text-align: center;
+      padding: 12px 10px;
+      font-size: 14px;
+      background: #fff;
+      box-shadow: 0 -4px 10px rgba(0,0,0,0.1);
+      color: #e91e63;
+    }
+
     @media (max-width: 768px) {
-      .floating-dropdown {
-        width: 95%;
-        padding: 10px 14px;
+      header h1 {
+        font-size: 22px;
+      }
+      header p {
+        font-size: 14px;
       }
       .floating-dropdown select {
         font-size: 14px;
@@ -53,85 +89,91 @@
   </style>
 </head>
 <body>
-  <!-- Floating Dropdown Panel -->
-  <div class="floating-dropdown">
-    <select id="locationSelect">
-      <option value="">-- Select a location --</option>
 
-      <!-- Dublin, Ireland -->
-      <option value="53.3498,-6.2603">Dublin: Temple Bar</option>
-      <option value="53.3441,-6.2675">Dublin: Trinity College</option>
-      <option value="53.3488,-6.2597">Dublin: Dublin Castle</option>
-      <option value="53.3478,-6.2597">Dublin: St. Patrick's Cathedral</option>
+<header>
+  <h1>Zoe’s Atlas 🐞✨</h1>
+  <p>Pick a city and location to see it on the map. Each stop is marked with my tiny heart-ladybug 🐞❤️</p>
+</header>
 
-      <!-- Madrid, Spain -->
-      <option value="40.4168,-3.7038">Madrid: Plaza Mayor</option>
-      <option value="40.4220,-3.6920">Madrid: Retiro Park</option>
-      <option value="40.4183,-3.7074">Madrid: Royal Palace</option>
-      <option value="40.4154,-3.7074">Madrid: Prado Museum</option>
+<div class="floating-dropdown">
+  <select id="locationSelect">
+    <option value="">📍 Where are we going?</option>
 
-      <!-- Barcelona, Spain -->
-      <option value="41.3851,2.1734">Barcelona: La Sagrada Familia</option>
-      <option value="41.3825,2.1769">Barcelona: Gothic Quarter</option>
-      <option value="41.3755,2.1498">Barcelona: Park Güell</option>
-      <option value="41.3785,2.1854">Barcelona: Casa Batlló</option>
+    <!-- Dublin, Ireland -->
+    <option value="53.3498,-6.2603">Dublin: Temple Bar</option>
+    <option value="53.3441,-6.2675">Dublin: Trinity College</option>
+    <option value="53.3488,-6.2597">Dublin: Dublin Castle</option>
+    <option value="53.3478,-6.2597">Dublin: St. Patrick's Cathedral</option>
 
-      <!-- Guatemala -->
-      <option value="14.6349,-90.5069">Guatemala City: Central Market</option>
-      <option value="14.6091,-90.5250">Antigua: Santa Catalina Arch</option>
-      <option value="14.5589,-90.7334">Lake Atitlán: Panajachel</option>
-      <option value="14.5560,-90.7330">Lake Atitlán: San Pedro La Laguna</option>
-    </select>
-  </div>
+    <!-- Madrid, Spain -->
+    <option value="40.4168,-3.7038">Madrid: Plaza Mayor</option>
+    <option value="40.4220,-3.6920">Madrid: Retiro Park</option>
+    <option value="40.4183,-3.7074">Madrid: Royal Palace</option>
+    <option value="40.4154,-3.7074">Madrid: Prado Museum</option>
 
-  <!-- Map Container -->
-  <div id="map"></div>
+    <!-- Barcelona, Spain -->
+    <option value="41.3851,2.1734">Barcelona: La Sagrada Familia</option>
+    <option value="41.3825,2.1769">Barcelona: Gothic Quarter</option>
+    <option value="41.3755,2.1498">Barcelona: Park Güell</option>
+    <option value="41.3785,2.1854">Barcelona: Casa Batlló</option>
 
-  <script>
-    let map;
-    let currentMarker = null;
+    <!-- Guatemala -->
+    <option value="14.6349,-90.5069">Guatemala City: Central Market</option>
+    <option value="14.6091,-90.5250">Antigua: Santa Catalina Arch</option>
+    <option value="14.5589,-90.7334">Lake Atitlán: Panajachel</option>
+    <option value="14.5560,-90.7330">Lake Atitlán: San Pedro La Laguna</option>
+  </select>
+</div>
 
-    function initMap() {
-      map = new google.maps.Map(document.getElementById("map"), {
-        center: { lat: 40.4168, lng: -3.7038 },
-        zoom: 6,
+<div id="map"></div>
+
+<footer>
+  Made with love by Zoe Bmoretastee 🐞 — Cultural Compass Project
+</footer>
+
+<script>
+  let map;
+  let currentMarker = null;
+
+  function initMap() {
+    map = new google.maps.Map(document.getElementById("map"), {
+      center: { lat: 40.4168, lng: -3.7038 },
+      zoom: 6,
+    });
+
+    const customIcon = {
+      url: "https://i.imgur.com/fQdWZrX.png", // tiny heart-ladybug
+      scaledSize: new google.maps.Size(40, 40),
+      anchor: new google.maps.Point(20, 40)
+    };
+
+    document.getElementById("locationSelect").addEventListener("change", function() {
+      const value = this.value;
+      if (!value) return;
+
+      const [lat, lng] = value.split(",").map(Number);
+      const position = { lat, lng };
+
+      if (currentMarker) {
+        currentMarker.setMap(null);
+      }
+
+      currentMarker = new google.maps.Marker({
+        position,
+        map,
+        icon: customIcon,
+        animation: google.maps.Animation.DROP,
       });
 
-      const customIcon = {
-        url: "https://i.imgur.com/fQdWZrX.png", // 🐞❤️ tiny heart-ladybug with transparent background
-        scaledSize: new google.maps.Size(40, 40),
-        anchor: new google.maps.Point(20, 40)
-      };
+      map.setCenter(position);
+      map.setZoom(12);
+    });
+  }
+</script>
 
-      document.getElementById("locationSelect").addEventListener("change", function() {
-        const value = this.value;
-        if (!value) return;
+<script async defer
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB38rOcYSnjrdPynqMR6i0vpP8ZYi1Z2W4&callback=initMap">
+</script>
 
-        const [lat, lng] = value.split(",").map(Number);
-        const position = { lat, lng };
-
-        // Remove old marker
-        if (currentMarker) {
-          currentMarker.setMap(null);
-        }
-
-        // Add new custom marker
-        currentMarker = new google.maps.Marker({
-          position,
-          map,
-          icon: customIcon,
-          animation: google.maps.Animation.DROP,
-        });
-
-        // Zoom to location
-        map.setCenter(position);
-        map.setZoom(12);
-      });
-    }
-  </script>
-
-  <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB38rOcYSnjrdPynqMR6i0vpP8ZYi1Z2W4&callback=initMap">
-  </script>
 </body>
 </html>
