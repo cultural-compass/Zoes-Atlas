@@ -2,25 +2,20 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Zoe Atlas 🐞</title>
   <style>
-    /* Full page reset */
-    body, html {
+    body {
       margin: 0;
       padding: 0;
-      height: 100%;
       font-family: Arial, sans-serif;
     }
 
-    /* Map fills the viewport */
     #map {
       width: 100%;
       height: 100vh;
       position: relative;
     }
 
-    /* Floating dropdown container */
     .floating-dropdown {
       position: absolute;
       top: 15px;
@@ -35,29 +30,14 @@
       box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     }
 
-    /* City section headers */
-    .city-header {
-      cursor: pointer;
-      font-weight: bold;
-      margin-top: 10px;
-      padding: 8px;
-      background: #f1f1f1;
-      border-radius: 15px;
-    }
-
-    /* Location items (hidden initially) */
-    .location-item {
-      display: none;
-      padding: 6px 10px;
-      cursor: pointer;
-      border-radius: 12px;
-      margin: 2px 0;
-      background: #fff;
+    .floating-dropdown select {
+      width: 100%;
+      padding: 10px 12px;
+      font-size: 16px;
+      border-radius: 25px;
       border: 1px solid #ccc;
-    }
-
-    .location-item:hover {
-      background-color: #ffe6f0;
+      outline: none;
+      background-color: #fff;
     }
 
     @media (max-width: 768px) {
@@ -65,88 +45,69 @@
         width: 95%;
         padding: 10px 14px;
       }
-      .city-header {
+      .floating-dropdown select {
         font-size: 14px;
-        padding: 6px;
-      }
-      .location-item {
-        font-size: 14px;
-        padding: 5px 8px;
+        padding: 8px 10px;
       }
     }
   </style>
 </head>
 <body>
+  <!-- Floating Dropdown Panel -->
+  <div class="floating-dropdown">
+    <select id="locationSelect">
+      <option value="">-- Select a location --</option>
 
-<!-- Floating Dropdown Panel -->
-<div class="floating-dropdown" id="dropdown">
-  <!-- Dublin -->
-  <div class="city-header">Dublin, Ireland</div>
-  <div class="location-item" data-lat="53.3498" data-lng="-6.2603">Temple Bar</div>
-  <div class="location-item" data-lat="53.3441" data-lng="-6.2675">Trinity College</div>
-  <div class="location-item" data-lat="53.3488" data-lng="-6.2597">Dublin Castle</div>
-  <div class="location-item" data-lat="53.3478" data-lng="-6.2597">St. Patrick's Cathedral</div>
+      <!-- Dublin, Ireland -->
+      <option value="53.3498,-6.2603">Dublin: Temple Bar</option>
+      <option value="53.3441,-6.2675">Dublin: Trinity College</option>
+      <option value="53.3488,-6.2597">Dublin: Dublin Castle</option>
+      <option value="53.3478,-6.2597">Dublin: St. Patrick's Cathedral</option>
 
-  <!-- Madrid -->
-  <div class="city-header">Madrid, Spain</div>
-  <div class="location-item" data-lat="40.4168" data-lng="-3.7038">Plaza Mayor</div>
-  <div class="location-item" data-lat="40.4220" data-lng="-3.6920">Retiro Park</div>
-  <div class="location-item" data-lat="40.4183" data-lng="-3.7074">Royal Palace</div>
-  <div class="location-item" data-lat="40.4154" data-lng="-3.7074">Prado Museum</div>
+      <!-- Madrid, Spain -->
+      <option value="40.4168,-3.7038">Madrid: Plaza Mayor</option>
+      <option value="40.4220,-3.6920">Madrid: Retiro Park</option>
+      <option value="40.4183,-3.7074">Madrid: Royal Palace</option>
+      <option value="40.4154,-3.7074">Madrid: Prado Museum</option>
 
-  <!-- Barcelona -->
-  <div class="city-header">Barcelona, Spain</div>
-  <div class="location-item" data-lat="41.3851" data-lng="2.1734">La Sagrada Familia</div>
-  <div class="location-item" data-lat="41.3825" data-lng="2.1769">Gothic Quarter</div>
-  <div class="location-item" data-lat="41.3755" data-lng="2.1498">Park Güell</div>
-  <div class="location-item" data-lat="41.3785" data-lng="2.1854">Casa Batlló</div>
+      <!-- Barcelona, Spain -->
+      <option value="41.3851,2.1734">Barcelona: La Sagrada Familia</option>
+      <option value="41.3825,2.1769">Barcelona: Gothic Quarter</option>
+      <option value="41.3755,2.1498">Barcelona: Park Güell</option>
+      <option value="41.3785,2.1854">Barcelona: Casa Batlló</option>
 
-  <!-- Guatemala -->
-  <div class="city-header">Guatemala</div>
-  <div class="location-item" data-lat="14.6349" data-lng="-90.5069">Guatemala City: Central Market</div>
-  <div class="location-item" data-lat="14.6091" data-lng="-90.5250">Antigua: Santa Catalina Arch</div>
-  <div class="location-item" data-lat="14.5589" data-lng="-90.7334">Lake Atitlán: Panajachel</div>
-  <div class="location-item" data-lat="14.5560" data-lng="-90.7330">Lake Atitlán: San Pedro La Laguna</div>
-</div>
+      <!-- Guatemala -->
+      <option value="14.6349,-90.5069">Guatemala City: Central Market</option>
+      <option value="14.6091,-90.5250">Antigua: Santa Catalina Arch</option>
+      <option value="14.5589,-90.7334">Lake Atitlán: Panajachel</option>
+      <option value="14.5560,-90.7330">Lake Atitlán: San Pedro La Laguna</option>
+    </select>
+  </div>
 
-<!-- Map Container -->
-<div id="map"></div>
+  <!-- Map Container -->
+  <div id="map"></div>
 
-<script>
-  let map;
-  let currentMarker = null;
+  <script>
+    let map;
+    let currentMarker = null;
 
-  function initMap() {
-    map = new google.maps.Map(document.getElementById("map"), {
-      center: { lat: 40.4168, lng: -3.7038 },
-      zoom: 6,
-    });
-
-    const customIcon = {
-      url: "https://example.com/your-custom-icon.png", // replace with your marker
-      scaledSize: new google.maps.Size(40, 40),
-    };
-
-    // Handle collapsible cities
-    document.querySelectorAll('.city-header').forEach(header => {
-      header.addEventListener('click', () => {
-        const locations = [];
-        let sibling = header.nextElementSibling;
-        while (sibling && sibling.classList.contains('location-item')) {
-          locations.push(sibling);
-          sibling = sibling.nextElementSibling;
-        }
-        locations.forEach(loc => {
-          loc.style.display = loc.style.display === 'block' ? 'none' : 'block';
-        });
+    function initMap() {
+      map = new google.maps.Map(document.getElementById("map"), {
+        center: { lat: 40.4168, lng: -3.7038 },
+        zoom: 6,
       });
-    });
 
-    // Handle location click
-    document.querySelectorAll('.location-item').forEach(item => {
-      item.addEventListener('click', () => {
-        const lat = parseFloat(item.getAttribute('data-lat'));
-        const lng = parseFloat(item.getAttribute('data-lng'));
+      const customIcon = {
+        url: "https://i.imgur.com/fQdWZrX.png", // 🐞❤️ tiny heart-ladybug with transparent background
+        scaledSize: new google.maps.Size(40, 40),
+        anchor: new google.maps.Point(20, 40)
+      };
+
+      document.getElementById("locationSelect").addEventListener("change", function() {
+        const value = this.value;
+        if (!value) return;
+
+        const [lat, lng] = value.split(",").map(Number);
         const position = { lat, lng };
 
         // Remove old marker
@@ -154,24 +115,23 @@
           currentMarker.setMap(null);
         }
 
-        // Add new marker
+        // Add new custom marker
         currentMarker = new google.maps.Marker({
           position,
           map,
           icon: customIcon,
-          animation: google.maps.Animation.DROP
+          animation: google.maps.Animation.DROP,
         });
 
+        // Zoom to location
         map.setCenter(position);
         map.setZoom(12);
       });
-    });
-  }
-</script>
+    }
+  </script>
 
-<script async defer
-  src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap">
-</script>
+  <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB38rOcYSnjrdPynqMR6i0vpP8ZYi1Z2W4&callback=initMap">
+  </script>
 </body>
 </html>
-
